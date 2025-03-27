@@ -25,34 +25,40 @@ function AddItemModalContent({ onItemAdded, onClose }) {
     // after the request is successful, it calls the onItemAdded function and closes the modal
     const handleFormSubmit = (event) => {
 
-        // Stop the HTML form from submitting
+        // Stop the default HTML form from submitting
+        // we need this in order to prevent the page from reloading
         event.preventDefault();
 
-        // this checks that all required fields are filled
+        // this checks that all required fields are filled so that items can be added to its appropriate
+        // category, name, description, and image
         if (!itemName || !itemCategory) {
             alert('Please fill in all required fields.');
             return;
         }
 
-        // NOTE: since we have a separate modal for adding categories, we will not be adding a new category here
+        // NOTE: Unlike the lab example, we have a separate modal for adding categories, we will not be adding a new category here
 
-        // Create FormData object to send the item data including the image file
+        // This is a FormData object to send the item data including the image file
         const formData = new FormData();
         formData.append("name", itemName);
         formData.append("description", itemDescription);
         formData.append("category_id", itemCategory);
         formData.append("image", itemImage);
 
+        // when the form is submitted, a POST request is sent to the API to the '/items' endpoint
         fetch("http://localhost:3000/items", {
             method: "POST",
             body: formData,
         })
+        // then it calls the onItemAdded function and closes the modal ofter a successful response
         .then(response => response.json())
         .then(() => {
             onItemAdded();
             onClose();
         });
 
+        // this resets the form fields after the item is added
+        // so that the user can add another item
         setItemName('');
         setItemDescription('');
         setItemCategory(categories.length > 0 ? categories[0].id : '');
