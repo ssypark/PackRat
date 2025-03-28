@@ -14,6 +14,10 @@ function Header() {
         />
         <h1 className="text-xl">PackRat</h1>
       </div>
+      {/* USER INFO */}
+      <div>
+        <p className="text-sm">Welcome Back: <strong>Shredder</strong></p>
+      </div>
 
     </header>
   );

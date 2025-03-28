@@ -9,6 +9,7 @@ const upload = require('../storage');
 // (R)EAD //
 // GET endpoint
 // creating a GET endpoint to get all items from the database
+// this is necessary because we need to display all the current the items in the category's grid
 itemsRouter.get('/', (req, res) => {
     // This query grabs all columns from the "items" table via SELECT and adds the categories name from the "categories" table via JOIN
     // as a new column called "category". It then JOINS the two tables together with the condition that the category_id in the "items" table
@@ -45,6 +46,7 @@ itemsRouter.get('/', (req, res) => {
 });
 
 // We also need the option to get a single item from the database
+// this is for the item details page
 itemsRouter.get('/:id', (req, res) => {
     // The id is extracted from the URL to an object so that we can destructure it
     const { id } = req.params;

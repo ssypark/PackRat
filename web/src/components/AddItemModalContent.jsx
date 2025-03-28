@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function AddItemModalContent({ onItemAdded, onClose }) {
+function AddItemModalContent({ onItemAdded, onClose, }) {
     // The state variables for the form to hold the category, name, description, and image of the item
     const [categories, setCategories] = useState([]);
     const [itemCategory, setItemCategory] = useState("");
@@ -52,8 +52,8 @@ function AddItemModalContent({ onItemAdded, onClose }) {
         })
         // then it calls the onItemAdded function and closes the modal ofter a successful response
         .then(response => response.json())
-        .then(() => {
-            onItemAdded();
+        .then((newItem) => {
+            onItemAdded(newItem); // Refresh the item list in the parent component by passing the new item back to it
             onClose();
         });
 

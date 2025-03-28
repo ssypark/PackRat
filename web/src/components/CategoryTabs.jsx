@@ -31,9 +31,7 @@ function CategoryTabs({ categories, selectedCategory, onSelectCategory, onAddCat
         >
           +
         </li>
-        <li>
-          Edit
-        </li>
+       
       </ul>
     </div>
   );

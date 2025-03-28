@@ -52,7 +52,7 @@ function ModalContent({ onCategoryAdded, onClose }) {
                 throw new Error(`Failed to add category: ${response.status} ${errorText}`);
             }
             const savedCategory = await response.json();
-            onCategoryAdded(savedCategory);
+            onCategoryAdded(savedCategory); 
             onClose();
         } catch (error) {
             console.error("Error in handleAddCategory:", error);

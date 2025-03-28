@@ -1,4 +1,3 @@
-// src/components/UpdateItemModalContent.jsx
 import React, { useState, useEffect } from "react";
 
 function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
@@ -10,9 +9,6 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
   const [name, setName] = useState(item.name);
   const [description, setDescription] = useState(item.description);
   const [image, setImage] = useState(null);
-  // State to toggle between selecting an existing category and adding a new one
-  const [isNewCategory, setIsNewCategory] = useState(false);
-  const [newCategory, setNewCategory] = useState("");
 
   // Fetch categories on mount
   useEffect(() => {
@@ -25,20 +21,11 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
         }
       })
       .catch((err) => console.error("Error fetching categories:", err));
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, [selectedCategory]); // Empty dependency array means this effect runs once on mount
 
   // Handle changes to the category select input
-  // If -1 is selected, setIsNewCategory is set to true, and setSelectedCategory is set to an empty string
-  // Otherwise, setIsNewCategory is set to false, and setSelectedCategory is set to the selected value
-  // This allows us to toggle between selecting an existing category and adding a new one
   const handleCategoryChange = (e) => {
-    if (e.target.value === "-1") {
-      setIsNewCategory(true);
-      setSelectedCategory("");
-    } else {
-      setIsNewCategory(false);
-      setSelectedCategory(e.target.value);
-    }
+    setSelectedCategory(e.target.value);
   };
 
   // Handle form submission to update the item
@@ -47,27 +34,6 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
     e.preventDefault();
     // Set the category ID based on the selected category
     let categoryId = selectedCategory;
-
-    // If a new category is being added, create it first
-    if (isNewCategory) {
-      // Send a POST request to create the new category
-      try {
-        const response = await fetch("http://localhost:3000/categories", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ category_name: newCategory }),
-        });
-        // If the response is not OK, throw an error
-        if (!response.ok) throw new Error("Failed to create new category");
-        // If the response is OK, parse the JSON data
-        const catData = await response.json();
-        // Then set the category ID to the new category's ID
-        categoryId = catData.category_id || catData.id;
-      } catch (error) {
-        console.error("Error creating new category:", error);
-        return;
-      }
-    }
 
     // Build a FormData object to send the updated data, including an optional updated image
     const formData = new FormData();
@@ -107,38 +73,18 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
           <label htmlFor="category" className="block text-sm font-medium text-gray-700">
             Category
           </label>
-          {!isNewCategory ? (
-            <select
-              id="category"
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded"
-            >
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-              <option value="-1">+ New Category +</option>
-            </select>
-          ) : (
-            <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                placeholder="New Category"
-                className="mt-1 block w-full p-2 border border-gray-300 rounded"
-              />
-              <button
-                type="button"
-                onClick={() => setIsNewCategory(false)}
-                className="px-3 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                Show List
-              </button>
-            </div>
-          )}
+          <select
+            id="category"
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded"
+          >
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
         </div>
         {/* Item Name */}
         <div>
@@ -171,7 +117,7 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
           <img
             src={`http://localhost:3000/images/${item.image_filename}`}
             alt={item.name}
-            className="w-full h-48 object-cover rounded mb-2"
+            className="w-full h-48 object-contain rounded mb-2"
           />
           <label htmlFor="image" className="block text-sm font-medium text-gray-700">
             Upload New Image
@@ -184,22 +130,24 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
           />
         </div>
         {/* Submit Button */}
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-4">
           <button
             type="submit"
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Save
           </button>
+                {/* Close Modal Button */}
+      <button
+        type="button"
+        onClick={() => { console.log("Cancel clicked"); onClose(); }}
+        className="px-4 py-2 bg-gray-200 rounded text-gray-500 hover:text-gray-700"
+      >
+        Cancel
+      </button>
         </div>
       </form>
-      {/* Close Modal Button */}
-      <button
-        onClick={onClose}
-        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-      >
-        x
-      </button>
+
     </div>
   );
 }
