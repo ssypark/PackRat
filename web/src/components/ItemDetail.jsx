@@ -25,14 +25,12 @@ function ItemDetail({ item, onUpdateRequest, onItemDeleted }) {
         className="w-full h-48 object-contain rounded-md my-10"
       />
       <div className="p-4 mt-12">
-
-        <h2 className="text-2xl font-bold mb-4 border-t">{item.name}</h2>
-
-        <p className="text-sm text-gray-600">
+        <h2 className="text-2xl font-bold">{item.name}</h2>
+        <p className="text-sm text-gray-600 mb-4">
           <strong>Category:</strong> {item.category}
         </p>
-
-        <p className="mb-2">{item.description}</p>
+        <p className="mb-0 font-bold">Details</p>
+        <p className="mb-8">{item.description}</p>
 
         <div className="flex justify-end space-x-4">
           <button

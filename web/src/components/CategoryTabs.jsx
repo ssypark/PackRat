@@ -2,7 +2,7 @@
 import React from "react";
 
 function CategoryTabs({ categories, selectedCategory, onSelectCategory, onAddCategory }) {
-  
+
   return (
     <div className="mb-8 border-b relative">
       <ul className="flex space-x-2">
@@ -12,13 +12,17 @@ function CategoryTabs({ categories, selectedCategory, onSelectCategory, onAddCat
             <li
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className="cursor-pointer p-2 px-4 rounded-t-md transition-colors hover:scale-105 "
+              className="cursor-pointer p-2 px-4 rounded-t-md transition-colors hover:scale-105 flex items-center "
               style={
                 isActive
-                  ? { backgroundColor: cat.color, color: "white" }
-                  : { backgroundColor: "white", color: cat.color, borderTop: `4px solid ${cat.color}` }
+                  ? { backgroundColor: "white", color: cat.color }
+                  : { backgroundColor: "white", color: cat.color }
               }
             >
+              <span
+                className="w-2 h-2 rounded-full inline-block mr-2"
+                style={{ backgroundColor: cat.color }}>
+              </span>
               {cat.name}
             </li>
           );
@@ -31,7 +35,7 @@ function CategoryTabs({ categories, selectedCategory, onSelectCategory, onAddCat
         >
           +
         </li>
-       
+
       </ul>
     </div>
   );
