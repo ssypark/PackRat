@@ -4,12 +4,16 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ItemGrid from "./components/ItemGrid";
 import ItemDetail from "./components/ItemDetail";
+import AddItemModal from "./components/AddItemModal"; 
+import AddCategoryModal from "./components/AddCategoryModal";
 
 function App() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
   const [items, setItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
 
   // Fetch categories on mount
   useEffect(() => {
@@ -36,7 +40,7 @@ function App() {
   }, [selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-slate-100 flex flex-col">
       <Header />
       <main className="flex-1 p-8">
         <div className="flex gap-4">
@@ -45,6 +49,10 @@ function App() {
               categories={categories}
               selectedCategory={selectedCategory}
               onSelectCategory={setSelectedCategory}
+              onAddCategory={() => {
+                setShowAddCategoryModal(true);
+              }}
+              onAddItem={() => setShowAddItemModal(true)}
               items={items}
               onSelectItem={setSelectedItem}
             />
@@ -55,6 +63,27 @@ function App() {
         </div>
       </main>
       <Footer />
+
+      {/* Conditionally render the AddItemModal */}
+      {showAddItemModal && (
+        <AddItemModal
+          onClose={() => setShowAddItemModal(false)}
+          onItemAdded={() => {
+            // Optionally refresh the items list or perform other actions
+            setShowAddItemModal(false);
+          }}
+        />
+      )}
+
+{showAddCategoryModal && (
+  <AddCategoryModal
+    onClose={() => setShowAddCategoryModal(false)}
+    onCategoryAdded={(newCategory) => {
+      setCategories((prevCategories) => [...prevCategories, newCategory]);
+      setShowAddCategoryModal(false);
+    }}
+  />
+)}
     </div>
   );
 }

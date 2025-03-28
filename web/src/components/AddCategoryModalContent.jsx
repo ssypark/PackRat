@@ -3,10 +3,19 @@ import React, { useState } from "react";
 function ModalContent({ onCategoryAdded, onClose }) {
     // these states hold the category name and color
     const [categoryName, setCategoryName] = useState(""); // initially empty
-    const [categoryColor, setCategoryColor] = useState("#a2b7d1"); // set to initial default color
+    const [categoryColor, setCategoryColor] = useState("#5e85b5"); // set to initial default color
 
     // Define a list of preset colors
-    const presetColors = ["#a2b7d1", "#FF5733", "#33FF57", "#3357FF", "#FFC300"];
+    const presetColors = [
+        "#8A9EBD", 
+        "#E04B2B", 
+        "#2ECC47", 
+        "#2B4CEB", 
+        "#E6AC00", 
+        "#8E44AD",
+        "#27AE60", 
+        "#D35400" 
+      ];
 
     const handleCategoryNameChange = (event) => {
         setCategoryName(event.target.value); // this updates the state whenever the input value changes
@@ -18,9 +27,9 @@ function ModalContent({ onCategoryAdded, onClose }) {
     };
 
     // this function is called when the user clicks the "Add Category" button
-    const handleAddCategory = () => {
+    const handleAddCategory = async () => { 
         // this checks that the category name is not empty. if it is, an alert is shown
-        if (!categoryName) {
+        if (!categoryName.trim()) {
             alert('Please enter a category name.');
             return;
         }
@@ -28,29 +37,43 @@ function ModalContent({ onCategoryAdded, onClose }) {
         const newCategory = {
             name: categoryName,
             color: categoryColor,
-            dateCreated: new Date().toISOString(),
+            dateCreated: new Date().toISOString(), 
         };
 
-        // this calls the onCategoryAdded function which is passed in via props with the new category
-        // then the parent component (AddCategoryModal) is closed
-        onCategoryAdded(newCategory);
-        onClose();
-
-        // Reset fields after adding
+        try {
+            const response = await fetch("http://localhost:3000/categories", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newCategory),
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to add category: ${response.status} ${errorText}`);
+            }
+            const savedCategory = await response.json();
+            onCategoryAdded(savedCategory);
+            onClose();
+        } catch (error) {
+            console.error("Error in handleAddCategory:", error);
+            alert("Error adding category. Please try again.");
+        }
+        
         setCategoryName('');
-        setCategoryColor('#a2b7d1');
+        setCategoryColor('#5e85b5');
     };
 
     return (
         <div className="p-4">
+            <p className="mb-2 font-bold">Add a Category</p>
             <input
                 type="text"
                 placeholder="Category Name"
                 value={categoryName}
                 onChange={handleCategoryNameChange}
-                className="border p-2 rounded mb-4 w-full"
+                className="border p-2 rounded mb-8 w-full"
             />
-            <div className="mb-4">
+            <div className="mb-12">
                 <p className="mb-2">Select a Color:</p>
                 <div className="flex space-x-2">
                     {presetColors.map((color) => (

@@ -66,29 +66,78 @@ function AddItemModalContent({ onItemAdded, onClose }) {
     };
 
     return (
-        <div>
-            <form onSubmit={handleFormSubmit} encType="multipart/form-data">
-                <input
-                    type="text"
-                    placeholder="Item Name"
-                    value={itemName}
-                    onChange={e => setItemName(e.target.value)}
-                />
-                <textarea
-                    placeholder="Description"
-                    value={itemDescription}
-                    onChange={e => setItemDescription(e.target.value)}
-                />
-                <select value={itemCategory} onChange={e => setItemCategory(e.target.value)}>
-                    {categories.map(category => (
-                        <option key={category.id} value={category.id}>{category.name}</option>
-                    ))}
-                </select>
-                <input type="file" onChange={e => setItemImage(e.target.files[0])} />
-                <button type="submit">Add Item</button>
-                <button type="button" onClick={onClose}>Cancel</button>
-            </form>
-        </div>
+        <div className="px-6 pb-6">
+    <form onSubmit={handleFormSubmit} encType="multipart/form-data" className="space-y-4">
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Add Item</h2>
+        <label htmlFor="itemName" className="block text-sm font-medium text-gray-700">Item Name</label>
+        <input
+          id="itemName"
+          type="text"
+          placeholder="Item Name"
+          value={itemName}
+          onChange={e => setItemName(e.target.value)}
+          className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="itemDescription" className="block text-sm font-medium text-gray-700">Description</label>
+        <textarea
+          id="itemDescription"
+          placeholder="Description"
+          value={itemDescription}
+          onChange={e => setItemDescription(e.target.value)}
+          className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+
+      <div className="relative">
+  <label htmlFor="itemCategory" className="block text-sm font-medium text-gray-700">Category</label>
+  <select
+    id="itemCategory"
+    value={itemCategory}
+    onChange={e => setItemCategory(e.target.value)}
+    className="block appearance-none w-full bg-white border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-10 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+  >
+    {categories.map(category => (
+      <option key={category.id} value={category.id}>{category.name}</option>
+    ))}
+  </select>
+  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+    <svg className="fill-current h-4 w-4 " viewBox="0 0 20 20">
+      <path d="M7 10l5 5 5-5H7z" />
+    </svg>
+  </div>
+</div>
+
+      <div>
+        <label htmlFor="itemImage" className="block text-sm font-medium text-gray-700">Image</label>
+        <input
+          id="itemImage"
+          type="file"
+          onChange={e => setItemImage(e.target.files[0])}
+          className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:rounded-md file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+        />
+      </div>
+
+      <div className="flex justify-end space-x-4">
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Add Item
+        </button>
+      </div>
+    </form>
+  </div>
     );
 }
 

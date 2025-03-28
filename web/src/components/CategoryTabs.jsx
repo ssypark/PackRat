@@ -1,22 +1,39 @@
 // src/components/CategoryTabs.jsx
 import React from "react";
 
-function CategoryTabs({ categories, selectedCategory, onSelectCategory }) {
+function CategoryTabs({ categories, selectedCategory, onSelectCategory, onAddCategory }) {
+  
   return (
-    <div className="mb-4 border-b">
-      <ul className="flex space-x-4">
-        {categories.map((cat) => (
-          <li
-            key={cat.id}
-            onClick={() => onSelectCategory(cat.id)}
-            className={`cursor-pointer p-2 rounded-t-md border-b-4 transition-colors
-              ${cat.id === selectedCategory
-                ? "bg-blue-500 text-white border-blue-500"
-                : "bg-white text-gray-800 border-transparent hover:border-gray-300"}`}
-          >
-            {cat.name}
-          </li>
-        ))}
+    <div className="mb-8 border-b relative">
+      <ul className="flex space-x-2">
+        {categories.map((cat) => {
+          const isActive = cat.id === selectedCategory;
+          return (
+            <li
+              key={cat.id}
+              onClick={() => onSelectCategory(cat.id)}
+              className="cursor-pointer p-2 px-4 rounded-t-md transition-colors hover:scale-105 "
+              style={
+                isActive
+                  ? { backgroundColor: cat.color, color: "white" }
+                  : { backgroundColor: "white", color: cat.color, borderTop: `4px solid ${cat.color}` }
+              }
+            >
+              {cat.name}
+            </li>
+          );
+        })}
+        {/* Plus Button Tab */}
+        <li
+          onClick={onAddCategory}
+          className="cursor-pointer p-2 px-4 rounded-t-md transition-colors"
+          style={{ backgroundColor: "white", color: "#666", borderTop: "4px solid #666" }}
+        >
+          +
+        </li>
+        <li>
+          Edit
+        </li>
       </ul>
     </div>
   );
