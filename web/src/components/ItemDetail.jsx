@@ -9,28 +9,28 @@ function ItemDetail({ item, onUpdateRequest, onItemDeleted }) {
 
   if (!item) {
     return (
-      <div className="p-4">
-        <p className="text-gray-600">Select an item to view details.</p>
+      <div className=" my-auto p-4 mx-auto  bg-stone-950/50 rounded-md shadow-md w-[500px]">
+        <p className="text-gray-200">Select an item to view details.</p>
       </div>
     );
   }
 
   return (
-    <div className="p-4 min-h-max mt-24  bg-white rounded-md shadow-md">
+    <div className="p-4 mx-auto border border-amber-600  bg-stone-950/50 rounded-md shadow-md w-[500px]">
       <img
       //we can get the image_filename from the item object and use it to construct the image URL to display
         src={`http://localhost:3000/images/${item.image_filename}`}
         // we can get the name from the item object and use it as the alt text
         alt={item.name}
-        className="w-full h-48 object-contain rounded-md my-10"
+        className="w-full h-128 object-contain bg-inherit rounded-md my-10"
       />
       <div className="p-4 mt-12">
-        <h2 className="text-2xl font-bold">{item.name}</h2>
-        <p className="text-sm text-gray-600 mb-4">
+        <h2 className="text-2xl text-stone-50 font-bold">{item.name}</h2>
+        <p className="text-sm text-gray-200 mb-4">
           <strong>Category:</strong> {item.category}
         </p>
-        <p className="mb-0 font-bold">Details</p>
-        <p className="mb-8">{item.description}</p>
+        <p className="mb-0 text-gray-200 font-bold">Details</p>
+        <p className="mb-8 text-gray-200 break-words">{item.description}</p>
 
         <div className="flex justify-end space-x-4">
           <button

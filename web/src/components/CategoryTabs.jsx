@@ -1,28 +1,39 @@
 // src/components/CategoryTabs.jsx
 import React from "react";
 
-function CategoryTabs({ categories, selectedCategory, onSelectCategory, onAddCategory }) {
+function CategoryTabs({
+  categories,
+  selectedCategory,
+  onSelectCategory,
+  onAddCategory
+}) {
 
   return (
-    <div className="mb-8 border-b relative">
-      <ul className="flex space-x-2">
+    <div className="flex items-center justify-center h-16">
+      <ul className="flex space-x-4 items-center">
         {categories.map((cat) => {
           const isActive = cat.id === selectedCategory;
           return (
             <li
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className="cursor-pointer p-2 px-4 rounded-t-md transition-colors hover:scale-105 flex items-center "
+              className="cursor-pointer py-2 px-8 rounded-full transition-all duration-200 ease-in-out hover:scale-105 hover:-translate-y-1 flex items-center"
               style={
                 isActive
-                  ? { backgroundColor: "white", color: cat.color }
-                  : { backgroundColor: "white", color: cat.color }
+                  ? {
+                    backgroundColor: "oklch(0.268 0.007 34.298)",
+                    boxShadow: `0px 0px 12px ${cat.color}`,
+                    color: cat.color,
+                    scale: "1.1"
+                  }
+                  : {
+                    backgroundColor: "oklch(0.268 0.007 34.298)",
+                    color: "oklch(0.869 0.005 56.366)",
+                    border: `1px solid ${cat.color}`
+                  }
               }
             >
-              <span
-                className="w-2 h-2 rounded-full inline-block mr-2"
-                style={{ backgroundColor: cat.color }}>
-              </span>
+
               {cat.name}
             </li>
           );
@@ -30,8 +41,12 @@ function CategoryTabs({ categories, selectedCategory, onSelectCategory, onAddCat
         {/* Plus Button Tab */}
         <li
           onClick={onAddCategory}
-          className="cursor-pointer p-2 px-4 rounded-t-md transition-colors"
-          style={{ backgroundColor: "white", color: "#666", borderTop: "4px solid #666" }}
+          className="cursor-pointer py-2 px-8 rounded-full transition-all duration-200 ease-in-out hover:scale-105 hover:-translate-y-1 flex items-center"
+          style={{ 
+            backgroundColor: "oklch(0.268 0.007 34.298)",
+             color: "#666",
+              boxShadow: "0px 0px 12px #666",
+             }}
         >
           +
         </li>

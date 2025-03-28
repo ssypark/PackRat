@@ -1,13 +1,16 @@
-// src/App.jsx
 import React, { useState, useEffect } from "react";
+
+// COMPONENTS
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import ItemGrid from "./components/ItemGrid";
 import ItemDetail from "./components/ItemDetail";
 import AddItemModal from "./components/AddItemModal";
 import AddCategoryModal from "./components/AddCategoryModal";
 import UpdateItemModal from "./components/UpdateItemModal";
 import DeleteItemModal from "./components/DeleteItemModal";
+import MasonryGrid from "./components/MasonryGrid";
+import CategoryTabs from "./components/CategoryTabs";
+import Squares from "./components/Squares";
 
 function App() {
   //CATEGORIES
@@ -59,13 +62,37 @@ function App() {
     }
   }, [selectedCategory]);
 
+  useEffect(() => {
+    if (selectedCategory) {
+      fetch(`http://localhost:3000/items?category=${selectedCategory}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Fetched items:", data);
+          setItems(data);
+          setSelectedItem(null);
+        })
+        .catch((err) => console.error("Error fetching items:", err));
+    }
+  }, [selectedCategory]);
+
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
+    <div className="min-h-screen bg-none flex flex-col relative">
+      <div className="fixed inset-0 -z-10">
+        <Squares
+          speed={0.5}
+          squareSize={80}
+          direction='diagonal' // up, down, left, right, diagonal
+          borderColor='#fff'
+          hoverFillColor='#222'
+        />
+      </div>
       <Header />
-      <main className="flex-1 p-8">
+
+      <main className="container mx-auto  flex flex-1 p-8">
+
         <div className="flex gap-4">
           <div className="flex-1">
-            <ItemGrid
+            {/* <ItemGrid
               categories={categories}
               selectedCategory={selectedCategory}
               onSelectCategory={setSelectedCategory}
@@ -75,6 +102,12 @@ function App() {
               onAddItem={() => setShowAddItemModal(true)}
               items={items}
               onSelectItem={setSelectedItem}
+            /> */}
+            <MasonryGrid
+              items={items}
+              onSelectItem={setSelectedItem}
+              categories={categories}
+              onAddItem={() => setShowAddItemModal(true)}
             />
           </div>
           <div className="w-full md:w-1/3">
@@ -94,6 +127,14 @@ function App() {
                   })
                   .catch((err) => console.error("Error fetching items:", err));
               }}
+            />
+          </div>
+          <div className="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-stone-950/50 border border-amber-700 py-4 px-6 rounded-lg">
+            <CategoryTabs
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+              onAddCategory={() => setShowAddCategoryModal(true)}
             />
           </div>
         </div>
@@ -177,6 +218,8 @@ function App() {
           }}
         />
       )}
+
+
     </div>
   );
 }

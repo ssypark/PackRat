@@ -3,9 +3,9 @@ import React from 'react';
 
 function Header() {
   return (
-    <header className=" text-black p-4 flex items-center justify-between border-b">
+    <header className=" text-stone-50 p-4 flex items-center justify-between border-b border-stone-300">
       {/* Logo and Title */}
-      <div className="flex items-center">
+      <div className="flex items-center ">
         {/* Replace the src with your actual logo path */}
         <img 
           src="../public/icon.svg" 
