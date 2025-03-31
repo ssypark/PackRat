@@ -10,7 +10,8 @@ import UpdateItemModal from "./components/UpdateItemModal";
 import DeleteItemModal from "./components/DeleteItemModal";
 import MasonryGrid from "./components/MasonryGrid";
 import CategoryTabs from "./components/CategoryTabs";
-import Squares from "./components/Squares";
+import DeleteCategoryModal from "./components/DeleteCategoryModal";
+
 
 function App() {
   //CATEGORIES
@@ -20,6 +21,10 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   // this controls the visibility of the add category modal
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  // this controls the visibility of the confirm deletion modal
+  const [showConfirmDeletion, setShowConfirmDeletion] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const [showDeleteCategoryModal, setShowDeleteCategoryModal] = useState(false);
 
   //ITEMS
   // this holds the list of items
@@ -76,33 +81,30 @@ function App() {
   }, [selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-none flex flex-col relative">
-      <div className="fixed inset-0 -z-10">
-        <Squares
-          speed={0.5}
-          squareSize={80}
-          direction='diagonal' // up, down, left, right, diagonal
-          borderColor='#fff'
-          hoverFillColor='#222'
-        />
-      </div>
+    <div className="min-h-screen bg-stone-100 flex flex-col relative">
+
       <Header />
 
-      <main className="container mx-auto  flex flex-1 p-8">
+      <main className="container mx-auto ">
 
-        <div className="flex gap-4">
-          <div className="flex-1">
-            {/* <ItemGrid
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
-              onAddCategory={() => {
-                setShowAddCategoryModal(true);
-              }}
-              onAddItem={() => setShowAddItemModal(true)}
-              items={items}
-              onSelectItem={setSelectedItem}
-            /> */}
+        <div className="my-4">
+          <CategoryTabs
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+            onAddCategory={() => setShowAddCategoryModal(true)}
+            onDeleteCategory={(catId) => {
+              // Set the category to delete and show the modal
+              const cat = categories.find((c) => c.id === catId);
+              setCategoryToDelete(cat);
+              setShowDeleteCategoryModal(true);
+            }}
+          />
+        </div>
+
+        <div className="container mx-auto flex flex-1 p-8 flex-col md:flex-row justify-between gap-4">
+          <div className="w-full md:w-1/3 p-8 bg-stone-200  rounded-xl shadow-md">
+
             <MasonryGrid
               items={items}
               onSelectItem={setSelectedItem}
@@ -110,7 +112,7 @@ function App() {
               onAddItem={() => setShowAddItemModal(true)}
             />
           </div>
-          <div className="w-full md:w-1/3">
+          <div className="w-full md:w-2/3  bg-stone-200 rounded-xl shadow-md">
             <ItemDetail
               item={selectedItem}
               onUpdateRequest={(item) => {
@@ -129,17 +131,12 @@ function App() {
               }}
             />
           </div>
-          <div className="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-50 bg-stone-950/50 border border-amber-700 py-4 px-6 rounded-lg">
-            <CategoryTabs
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
-              onAddCategory={() => setShowAddCategoryModal(true)}
-            />
-          </div>
         </div>
+
       </main>
-      <Footer />
+      <div className="fixed bottom-0 left-0 w-full bg-stone-100 ">
+        <Footer />
+      </div>
 
       {/* MODALS */}
       {/*  Add Item Modal - when an item is added, the api returns the new item object (newItem) which is then used to refresh/update the item grid */}
@@ -218,7 +215,39 @@ function App() {
           }}
         />
       )}
-
+      {/* Confirm Deletion Modal - When an category is deleted, we show this modal */}
+      {showDeleteCategoryModal && categoryToDelete && (
+        <DeleteCategoryModal
+          message={`Are you sure you want to delete category "${categoryToDelete.name}"?`}
+          onConfirm={() => {
+            fetch(`http://localhost:3000/categories/${categoryToDelete.id}`, {
+              method: "DELETE",
+            })
+              .then((res) => res.json())
+              .then(() => {
+                // Refresh categories after deletion
+                fetch("http://localhost:3000/categories")
+                  .then((res) => res.json())
+                  .then((data) => {
+                    setCategories(data);
+                    // Optionally update selectedCategory if needed
+                  })
+                  .catch((err) =>
+                    console.error("Error refreshing categories:", err)
+                  );
+                setShowDeleteCategoryModal(false);
+                setCategoryToDelete(null);
+              })
+              .catch((err) =>
+                console.error("Error deleting category:", err)
+              );
+          }}
+          onCancel={() => {
+            setShowDeleteCategoryModal(false);
+            setCategoryToDelete(null);
+          }}
+        />
+      )}
 
     </div>
   );

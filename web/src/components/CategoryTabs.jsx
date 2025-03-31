@@ -5,7 +5,8 @@ function CategoryTabs({
   categories,
   selectedCategory,
   onSelectCategory,
-  onAddCategory
+  onAddCategory,
+  onDeleteCategory 
 }) {
 
   return (
@@ -17,35 +18,46 @@ function CategoryTabs({
             <li
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className="cursor-pointer py-2 px-8 rounded-full transition-all duration-200 ease-in-out hover:scale-105 hover:-translate-y-1 flex items-center"
+              className="cursor-pointer py-2 pl-8 pr-4 shadow-md rounded-full transition-all duration-200 ease-in-out hover:scale-105 hover:-translate-y-1 flex items-center"
               style={
                 isActive
                   ? {
-                    backgroundColor: "oklch(0.268 0.007 34.298)",
-                    boxShadow: `0px 0px 12px ${cat.color}`,
-                    color: cat.color,
+                    backgroundColor: `${cat.color}`,
+                    boxShadow: `0px 0px 16px ${cat.color}`,
+                    color: "oklch(0.444 0.011 73.639)",
                     scale: "1.1"
                   }
                   : {
-                    backgroundColor: "oklch(0.268 0.007 34.298)",
-                    color: "oklch(0.869 0.005 56.366)",
-                    border: `1px solid ${cat.color}`
+                    backgroundColor: "oklch(0.869 0.005 56.366)",
+                    color: "oklch(0.553 0.013 58.071)",
+                    
+                    
                   }
               }
             >
-
               {cat.name}
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteCategory(cat.id); 
+                }}
+                className="ml-4 text-lg text-stone-400 hover:text-red-600 cursor-pointer"
+              >
+                &times;
+              </span>
             </li>
           );
         })}
         {/* Plus Button Tab */}
         <li
           onClick={onAddCategory}
-          className="cursor-pointer py-2 px-8 rounded-full transition-all duration-200 ease-in-out hover:scale-105 hover:-translate-y-1 flex items-center"
+          title="Click to add a new category"
+          className="cursor-pointer py-2 px-4 shadow-md rounded-full transition-all duration-200 ease-in-out hover:scale-105 hover:-translate-y-1 flex items-center"
           style={{ 
-            backgroundColor: "oklch(0.268 0.007 34.298)",
-             color: "#666",
-              boxShadow: "0px 0px 12px #666",
+            backgroundColor: "oklch(0.869 0.005 56.366)",
+             color: "oklch(0.553 0.013 58.071)",
+            
+             
              }}
         >
           +

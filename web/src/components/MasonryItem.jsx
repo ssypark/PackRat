@@ -3,17 +3,18 @@ import React from "react";
 
 function MasonryItem({ item, categoryColor, onSelectItem }) {
   const imageUrl = item.image_filename
-  ? `http://localhost:3000/images/${item.image_filename}`
-  : "";
-  // in order for the gradient overlay to work, we need to set the orbColor to the categoryColor which is passed in as a prop from the parent
+    ? `http://localhost:3000/images/${item.image_filename}`
+    : "";
+  // Use the passed categoryColor or default to black
   const orbColor = categoryColor || "#000000";
+  
   return (
     <div 
       onClick={() => onSelectItem(item)}
-      className="relative w-48 h-48 rounded-full overflow-hidden bg-white cursor-pointer"
+      title={item.name}
+      className="relative w-24 h-24 rounded-full overflow-hidden bg-white cursor-pointer shadow-lg hover:scale-115 transition-all duration-200 ease-in-out"
       style={{
-        border: `px solid ${orbColor}`,
-        
+        border: `1px solid ${orbColor}`,
       }}
     >
       {/* 1) Background image layer */}
@@ -26,22 +27,14 @@ function MasonryItem({ item, categoryColor, onSelectItem }) {
           backgroundRepeat: "no-repeat",
         }}
       />
-
       {/* 2) Orb overlay: radial gradient from transparent center to fully opaque edges */}
       <div
         className="absolute inset-0"
         style={{
-          // For a stronger orb effect, we start transparent around the center
-          // and end with 100% color at the edges.
-          background: `radial-gradient(circle at center, 
-                      transparent 10%,
-                      ${orbColor} 60%,
-                      ${orbColor} 80%, 
-                      ${orbColor} 100%)`,
-                      
+          background: `radial-gradient(circle at center, transparent 10%, ${orbColor} 60%, ${orbColor} 80%, ${orbColor} 100%)`,
         }}
       />
-      {/* Highlight overlay: This layer adds a white highlight near the top right */}
+      {/* 3) Highlight overlay */}
       <div
         className="absolute inset-0 z-20 pointer-events-none"
         style={{
@@ -51,6 +44,5 @@ function MasonryItem({ item, categoryColor, onSelectItem }) {
     </div>
   );
 }
-
 
 export default MasonryItem;

@@ -7,14 +7,14 @@ function ModalContent({ onCategoryAdded, onClose }) {
 
     // Define a list of preset colors
     const presetColors = [
-        "#8A9EBD", 
-        "#E04B2B", 
-        "#2ECC47", 
-        "#2B4CEB", 
-        "#E6AC00", 
-        "#8E44AD",
-        "#27AE60", 
-        "#D35400" 
+        "#AEC8E0", 
+        "#DBB1CF", 
+        "#BDD9A7",
+        "#C9D6E3", 
+        "#E2B8D9", 
+        "#D1E8C2", 
+        "#F2D1B3", 
+        "#F7E1A0"
       ];
 
     const handleCategoryNameChange = (event) => {
@@ -35,11 +35,11 @@ function ModalContent({ onCategoryAdded, onClose }) {
         }
         // this creates a new category object which includes the category name, color, and date created
         const newCategory = {
-            name: categoryName,
+            category_name: categoryName,
             color: categoryColor,
             dateCreated: new Date().toISOString(), 
         };
-
+        console.log("Submitting newCategory:", newCategory);
         try {
             const response = await fetch("http://localhost:3000/categories", {
                 method: "POST",
@@ -70,7 +70,7 @@ function ModalContent({ onCategoryAdded, onClose }) {
                 type="text"
                 placeholder="Category Name"
                 value={categoryName}
-                onChange={handleCategoryNameChange}
+                onChange={(e) => setCategoryName(e.target.value)}
                 className="border p-2 rounded mb-8 w-full"
             />
             <div className="mb-12">

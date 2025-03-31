@@ -53,7 +53,7 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
       // If the response isnt OK, throw an error
       if (!response.ok) throw new Error("Failed to update item");
       // If the response is OK, parse the JSON data
-      const result = await response.json(); 
+      const result = await response.json();
       console.log("Update result:", result);
       // once the item is updated, call the onItemUpdated function and then close the modal
       onItemUpdated(); // Refresh the item list in the parent component
@@ -66,18 +66,18 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-4">Edit Item</h3>
+      <h3 className="text-2xl font-bold text-stone-700 mb-4">Edit Item</h3>
       <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
         {/* Category Section */}
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="category" className="block text-sm font-medium text-stone-700">
             Category
           </label>
           <select
             id="category"
             value={selectedCategory}
             onChange={handleCategoryChange}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded"
+            className="mt-1 block w-full p-2 border border-stone-300 rounded"
           >
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
@@ -88,7 +88,7 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
         </div>
         {/* Item Name */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="name" className="block text-sm font-medium text-stone-700">
             Item Name
           </label>
           <input
@@ -96,55 +96,60 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded"
+            className="mt-1 block w-full p-2 border border-stone-300 rounded"
           />
         </div>
         {/* Description */}
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="description" className="block text-sm font-medium text-stone-700">
             Description
           </label>
           <textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="mt-1 block w-full p-2 border border-gray-300 rounded"
+            className="mt-1 block w-full h-48 p-2 border border-stone-300 rounded"
           />
         </div>
         {/* Image Section */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Current Image</label>
+          <label className="block text-sm font-medium text-stone-700">Current Image</label>
           <img
             src={`http://localhost:3000/images/${item.image_filename}`}
             alt={item.name}
             className="w-full h-48 object-contain rounded mb-2"
           />
-          <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+          {/* Changed label: using inline-block, smaller padding, and fixed width if desired */}
+          <label
+            htmlFor="image"
+            className="inline-block text-sm font-medium text-stone-700 mb-1 cursor-pointer px-4 py-2 bg-indigo-100 rounded-full hover:bg-indigo-200"
+          >
             Upload New Image
           </label>
           <input
             id="image"
             type="file"
             onChange={(e) => setImage(e.target.files[0])}
-            className="mt-1 block w-full"
+            className="hidden"
           />
         </div>
         {/* Submit Button */}
         <div className="flex justify-end gap-4">
+          {/* Close Modal Button */}
+          <button
+            type="button"
+            onClick={() => { console.log("Cancel clicked"); onClose(); }}
+            className="px-4 py-2 bg-stone-200 rounded-full text-stone-500 hover:text-stone-700"
+          >
+            Cancel
+          </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-4 py-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600"
           >
             Save
           </button>
-                {/* Close Modal Button */}
-      <button
-        type="button"
-        onClick={() => { console.log("Cancel clicked"); onClose(); }}
-        className="px-4 py-2 bg-gray-200 rounded text-gray-500 hover:text-gray-700"
-      >
-        Cancel
-      </button>
+
         </div>
       </form>
 

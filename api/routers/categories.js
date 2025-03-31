@@ -20,7 +20,7 @@ categoriesRouter.get('/', (req, res) => {
     });
 });
 
-// see items.js for explanation on how to create a POST endpoint
+// see items.js for full explanation on how to create a POST endpoint
 categoriesRouter.post("/", (req, res) => {
     // Extract category name and color from the request body
     // I added color to the categories table for better organization on the users end
@@ -39,4 +39,20 @@ categoriesRouter.post("/", (req, res) => {
     });
 });
 
+// see items.js for full explanation on how to create a DELETE endpoint
+categoriesRouter.delete('/:id', (req, res) => {
+    // Extract category ID from the URL
+    const { id } = req.params;
+
+    // SQL query to delete the category with the specified ID
+    const sql = "DELETE FROM categories WHERE id = ?";
+    // This runs the query above, category name replace the ? placeholders in the query
+    db.query(sql, [id], (err, results) => {
+      if (err) {
+        console.error("Error deleting category:", err);
+        return res.status(500).send(err);
+      }
+      res.json({ message: "Category deleted successfully" });
+    });
+  });
 module.exports = categoriesRouter;
