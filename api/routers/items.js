@@ -1,7 +1,10 @@
 // with express installed we can create a router
 const express = require('express');
+// creating a router for this endpoint
 const itemsRouter = express.Router();
+// connecting to the database
 const db = require('../db');
+// connecting to the upload middleware
 const upload = require('../storage');
 
 

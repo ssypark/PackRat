@@ -16,7 +16,8 @@ function ModalContent({ onCategoryAdded, onClose }) {
         "#F2D1B3", 
         "#F7E1A0"
       ];
-
+    
+    // See AddItemModalContent.jsx for full explanation
     const handleCategoryNameChange = (event) => {
         setCategoryName(event.target.value); // this updates the state whenever the input value changes
     };

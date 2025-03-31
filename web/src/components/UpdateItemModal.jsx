@@ -4,7 +4,6 @@ import { createPortal } from "react-dom";
 import UpdateItemModalContent from "./UpdateItemModalContent";
 
 function UpdateItemModal({ item, onClose, onItemUpdated }) {
-  console.log("onClose prop:", onClose); // This logs undefined – so onClose isn't coming in from the parent!
   return createPortal(
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="relative bg-white rounded-md shadow-lg p-6 max-w-lg w-full">

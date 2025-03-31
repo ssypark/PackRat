@@ -16,26 +16,26 @@ function ItemDetail({ item, onUpdateRequest, onItemDeleted }) {
 
   return (
     <div className="pt-8 px-12 mx-auto h-[900px] overflow-y-auto">
-      {/* Header row: Item name & category on the left, update/delete buttons on the right */}
+      {/* Header row*/}
       <div className="flex items-center justify-between">
         <div>
           <p className="text-2xl font-bold text-stone-600">{item.name}</p>
           <p className="text-sm text-stone-400">{item.category}</p>
         </div>
         <div className="flex space-x-2">
-        <button
+          <button
             onClick={() => setShowDeleteModal(true)}
-            className="px-2 py-1 bg-stone-500 text-stone-50 rounded-full text-sm hover:bg-orange-600"
+            className="px-2 py-1 bg-stone-400 text-stone-50 rounded-full text-sm hover:bg-orange-500"
           >
             Delete
           </button>
           <button
             onClick={() => onUpdateRequest(item)}
-            className="px-2 py-1 bg-indigo-500 text-stone-50 rounded-full text-sm hover:bg-indigo-600"
+            className="px-2 py-1 bg-indigo-400 text-stone-50 rounded-full text-sm hover:bg-indigo-500"
           >
             Update
           </button>
-        
+
         </div>
       </div>
 
@@ -51,18 +51,18 @@ function ItemDetail({ item, onUpdateRequest, onItemDeleted }) {
         <p className="mb-0 text-lg text-stone-600 font-bold">Details</p>
         <p className="mb-8 text-stone-600 break-words">{item.description}</p>
       </div>
-    
+
       {/* Modals */}
       {showDeleteModal && (
-  <DeleteItemModal
-    item={item}
-    onClose={() => setShowDeleteModal(false)}
-    onItemDeleted={() => {
-      setShowDeleteModal(false);
-      if (onItemDeleted) onItemDeleted();
-    }}
-  />
-)}
+        <DeleteItemModal
+          item={item}
+          onClose={() => setShowDeleteModal(false)}
+          onItemDeleted={() => {
+            setShowDeleteModal(false);
+            if (onItemDeleted) onItemDeleted();
+          }}
+        />
+      )}
       {showUpdateModal && (
         <UpdateItemModal
           item={item}

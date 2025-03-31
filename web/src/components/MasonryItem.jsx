@@ -1,11 +1,10 @@
-// src/components/MasonryItem.jsx
 import React from "react";
 
 function MasonryItem({ item, categoryColor, onSelectItem }) {
   const imageUrl = item.image_filename
     ? `http://localhost:3000/images/${item.image_filename}`
     : "";
-  // Use the passed categoryColor or default to black
+
   const orbColor = categoryColor || "#000000";
   
   return (

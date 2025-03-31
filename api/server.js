@@ -2,11 +2,11 @@
 // it imports all the necessary modules and routers, establishes the middleware and starts the Express server
 const express = require('express');
 const cors = require('cors'); // enables cross-origin resource sharing
-const app = express();
+const app = express(); // creates an Express application
 const bodyParser = require('body-parser'); // enables parsing of JSON data so that
-const itemsRouter = require('./routers/items');
-const categoriesRouter = require('./routers/categories');
-const port = 3000;
+const itemsRouter = require('./routers/items'); // imports the items router
+const categoriesRouter = require('./routers/categories'); // imports the categories router
+const port = 3000; // sets the port number
 
 // Enable CORS
 app.use(cors());

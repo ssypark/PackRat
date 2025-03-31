@@ -1,6 +1,4 @@
-// src/components/Footer.jsx
 import React from 'react';
-import gsap from 'gsap';
 function Footer() {
   
   return (

@@ -72,7 +72,6 @@ function App() {
       fetch(`http://localhost:3000/items?category=${selectedCategory}`)
         .then((res) => res.json())
         .then((data) => {
-          console.log("Fetched items:", data);
           setItems(data);
           setSelectedItem(null);
         })

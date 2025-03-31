@@ -10,7 +10,6 @@ function AddItemModal({ onClose, onItemAdded }) {
             style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
             <div className="bg-white p-6 rounded-md shadow-md w-full max-w-lg">
-                {/* Render the content (the form) in a separate component */}
                 <AddItemModalContent onItemAdded={onItemAdded} onClose={onClose} />
             </div>
         </div>,

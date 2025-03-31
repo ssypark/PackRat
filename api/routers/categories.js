@@ -3,7 +3,7 @@ const db = require('../db');
 
 const categoriesRouter = express.Router();
 
-// see items.js for explanation on how to create a GET endpoint
+// see items.js for full explanation on how to create a GET endpoint
 categoriesRouter.get('/', (req, res) => {
 
     const sql = "SELECT * FROM categories";
