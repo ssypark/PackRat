@@ -6,8 +6,13 @@ const itemsRouter = express.Router();
 const db = require('../db');
 // connecting to the upload middleware
 const upload = require('../storage');
+// connecting to the JWT authentication middleware
+const authenticateToken = require("../auth.jwt");
 
-
+// PROTECTING THE ROUTES
+// we need to protect the routes so that only authenticated users can access them
+itemsRouter.use(authenticateToken);
+// this will protect all the routes in this router
 
 // (R)EAD //
 // GET endpoint
@@ -18,28 +23,42 @@ itemsRouter.get('/', (req, res) => {
     // as a new column called "category". It then JOINS the two tables together with the condition that the category_id in the "items" table
     // must match the id in the "categories" table. ie. Helmet id= 1 should go to the Cycling category (id=1). The results are then sent as a response.
     // this is necessary because it allows us to display the category name in the frontend instead of just the category id
+    const category = req.query.category;
+
+    const userId = req.user.userId; // Get the user ID from the JWT token
+
+    // We then start building the SQL query including the user ID
+    // this is necessary because we need to get the items for the logged in user
     let sql = `
         SELECT items.*, categories.name AS category
         FROM items
         JOIN categories ON items.category_id=categories.id
-    `;
+        WHERE `;
 
-    const queryParams = []; // an empty array to store the parameters for the query
+    // Start with an empty array for our parameters
+    const queryParams = [];
 
-    // if a category_id is provided in the query params, add it to the query
-    const { category } = req.query;
+    // Check if category filter is provided
     if (category) {
-        sql += ` WHERE items.category_id IN (?)`;
-        // we can handle a single category or an array of categories
+        // Add category filtering to the query
+        sql += `items.category_id IN (?) AND `;
+
+        // Handle both array of categories or a single category
         if (Array.isArray(category)) {
-            queryParams.push(...category); // the spread operator will add all the elements of the array to the queryParams array
+            // If it's an array, spread the values into queryParams
+            queryParams.push(...category);
         } else {
+            // If it's a single value, just add it to queryParams
             queryParams.push(category);
         }
     }
 
-    // execute the query. 
-    db.query(sql, [queryParams], (err, results) => {
+    // Always add the user filter
+    sql += `items.user_id = ?`;
+    queryParams.push(userId);
+
+    // execute the query with all our parameters
+    db.query(sql, queryParams, (err, results) => {
         if (err) {
             console.log(err);
             res.status(500).send('An error occurred');
@@ -53,25 +72,33 @@ itemsRouter.get('/', (req, res) => {
 itemsRouter.get('/:id', (req, res) => {
     // The id is extracted from the URL to an object so that we can destructure it
     const { id } = req.params;
+    
+    const userId = req.user.userId; // Get the user ID from the JWT token
+    
     // SQL query to get the item with the specified id
+    // Also ensure the item belongs to the authenticated user
     const sql = `
         SELECT items.*, categories.name AS category
         FROM items
         JOIN categories ON items.category_id=categories.id
-        WHERE items.id = ?`;
-    // Substitute the '?' with the id from the URL to prevent SQL injection
-    db.query(sql, [id], (err, results) => {
+        WHERE items.id = ? AND items.user_id = ?`; // Added user_id check
+        
+    // Substitute the '?' with the id from the URL and the user ID to prevent SQL injection
+    db.query(sql, [id, userId], (err, results) => { // Added userId parameter
         if (err) {
             console.error(err);
             res.status(500).send('An error occurred');
         }
+        
+        // If no results were found (either item doesn't exist or doesn't belong to user)
+        if (results.length === 0) {
+            return res.status(404).json({ message: "Item not found" });
+        }
+        
         console.log(results[0]);
-
         res.json(results[0]);
     });
 });
-
-
 
 // (D)ELETE //
 
@@ -80,19 +107,27 @@ itemsRouter.get('/:id', (req, res) => {
 itemsRouter.delete('/:id', (req, res) => {
     // The id is extracted from the URL
     const { id } = req.params; 
-    // SQL query to delete the item with the specified id
-    const sql = `DELETE FROM items WHERE id = ? LIMIT 1`;
-    // Substitute the '?' with the id from the URL to prevent SQL injection
-    db.query(sql, [id], (err, results) => {
+    
+    const userId = req.user.userId; // Get the user ID from the JWT token
+    
+    // SQL query to delete the item with the specified id, ensuring it belongs to this user
+    const sql = `DELETE FROM items WHERE id = ? AND user_id = ? LIMIT 1`; // Added user_id check
+    
+    // Substitute the '?' with the id from the URL and user ID to prevent SQL injection
+    db.query(sql, [id, userId], (err, results) => { // Added userId parameter
         if (err) {
             console.error(err);
             res.status(500).send('An error occurred');
         }
+        
+        // Check if an item was actually deleted
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: "Item not found or unauthorized" });
+        }
+        
         res.json({ message: "Item deleted successfully" });
     });
 });
-
-
 
 // (U)PDATE //
 
@@ -101,6 +136,9 @@ itemsRouter.delete('/:id', (req, res) => {
 itemsRouter.put('/:id', upload.single('image'), (req, res) => {
     // First we will get the id from the URL
     const { id } = req.params;
+    
+    const userId = req.user.userId; // Get the user ID from the JWT token
+    
     // Get the item and category ID from the request body
     const { name, description, category_id } = req.body;
 
@@ -118,20 +156,26 @@ itemsRouter.put('/:id', upload.single('image'), (req, res) => {
     }
 
     // Then we complete the SQL query by adding the WHERE clause to only update the item with the matching ID
-    updateItemSQL += ` WHERE id = ? LIMIT 1`;
+    // Also ensure the item belongs to this user
+    updateItemSQL += ` WHERE id = ? AND user_id = ? LIMIT 1`; // Added user_id check
     queryParams.push(id);
+    queryParams.push(userId); // Added userId parameter
 
-    // Run the query above, substituting the '?' placeholders with the item name, category ID, image (if uploaded) and ID in that order
+    // Run the query above, substituting the '?' placeholders with the item name, category ID, image (if uploaded), ID, and user ID in that order
     db.query(updateItemSQL, queryParams, (err, results) => {
         if (err) {
             console.log(err);
             return res.status(500).send("An error occurred while updating the item");
         }
+        
+        // Check if an item was actually updated
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: "Item not found or unauthorized" });
+        }
+        
         res.json({ message: "Item updated successfully" });
     });
 });
-
-
 
 // (C)REATE //
 
@@ -141,25 +185,29 @@ itemsRouter.post('/', upload.single('image'), (req, res) => {
     // First we will destructure the required fields from the request body
     const { name, description, category_id } = req.body;
     
+    const userId = req.user.userId; // Get the user ID from the JWT token
+    
     // The uploaded file's filename is stored in 'req.file.filename' also need to avoid error when no image is uploaded
     const image = req.file ? req.file.filename : null; // if a file was uploaded, store its filename, otherwise set it to null
     //this is necessary for this web app because of the amount of item images what would be added(I have too many hobbies and too many items)
 
     // Create the SQL query to insert a new item.
     // This query uses placeholders (?) for the values to prevent SQL injection.
-    const addItemSQL = `INSERT INTO items (name, description, category_id, image_filename) VALUES (?, ?, ?, ?)`;
+    // Also include the user_id in the insertion
+    const addItemSQL = `INSERT INTO items (name, description, category_id, image_filename, user_id) VALUES (?, ?, ?, ?, ?)`; // Added user_id field
 
-    // This runs the query above, item name, description, category ID and image filename replace the ? placeholders in the query
-    db.query(addItemSQL, [name, description, category_id, image], (err, results) => {
+    // This runs the query above, item name, description, category ID, image filename, and user ID replace the ? placeholders in the query
+    db.query(addItemSQL, [name, description, category_id, image, userId], (err, results) => { // Added userId parameter
         if (err) {
             console.log(err);
             return res.status(500).send("An error occurred while adding the item");
         }
         // Respond with a success message if insertion was successful.
-        res.json({ message: "Item added successfully" });
+        res.json({ 
+            message: "Item added successfully",
+            id: results.insertId // Return the new item ID for convenience
+        });
     });
 });
-
-
 
 module.exports = itemsRouter;

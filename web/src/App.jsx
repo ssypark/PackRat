@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // COMPONENTS
 import Header from "./components/Header";
@@ -11,244 +12,315 @@ import DeleteItemModal from "./components/DeleteItemModal";
 import MasonryGrid from "./components/MasonryGrid";
 import CategoryTabs from "./components/CategoryTabs";
 import DeleteCategoryModal from "./components/DeleteCategoryModal";
-
+// Import auth components (we'll create these next)
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
+// Import auth HOC
+import authRequired from "./authRequired";
 
 function App() {
+  // AUTH STATE
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userEmail, setUserEmail] = useState(null);
+
+  // Check for existing JWT token on mount
+  useEffect(() => {
+    const token = localStorage.getItem("jwt-token");
+    const email = localStorage.getItem("userEmail");
+    if (token && email) {
+      setIsAuthenticated(true);
+      setUserEmail(email);
+    }
+  }, []);
+
+  // AUTHENTICATION HANDLERS
+  const handleLogin = (token, email) => {
+    localStorage.setItem("jwt-token", token);
+    localStorage.setItem("userEmail", email);
+    setIsAuthenticated(true);
+    setUserEmail(email);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("jwt-token");
+    localStorage.removeItem("userEmail");
+    setIsAuthenticated(false);
+    setUserEmail(null);
+  };
+
   //CATEGORIES
-  // this holds the list of categories with properties such as id, name and color
   const [categories, setCategories] = useState([]);
-  // this holds the currently selected category
   const [selectedCategory, setSelectedCategory] = useState(null);
-  // this controls the visibility of the add category modal
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
-  // this controls the visibility of the confirm deletion modal
   const [showConfirmDeletion, setShowConfirmDeletion] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [showDeleteCategoryModal, setShowDeleteCategoryModal] = useState(false);
 
   //ITEMS
-  // this holds the list of items
   const [items, setItems] = useState([]);
-  // this holds the currently selected item
   const [selectedItem, setSelectedItem] = useState(null);
-  // this controls the visibility of the add item modal
   const [showAddItemModal, setShowAddItemModal] = useState(false);
-  // this controls the visibility of the update item modal
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  // this controls the visibility of the delete item modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  // this holds the item to be updated for the user
   const [itemToUpdate, setItemToUpdate] = useState(null);
 
-
-  // Fetch categories on mount
+  // Fetch categories with authentication
   useEffect(() => {
-    fetch("http://localhost:3000/categories")
-      .then((res) => res.json())
-      .then((data) => {
-        setCategories(data);
-        // this defaults to the first category to be selected
-        if (data.length > 0) setSelectedCategory(data[0].id);
+    if (isAuthenticated) {
+      fetch("http://localhost:3000/categories", {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
+        }
       })
-      .catch((err) => console.error("Error fetching categories:", err));
-  }, []);
+        .then((res) => res.json())
+        .then((data) => {
+          setCategories(data);
+          if (data.length > 0) setSelectedCategory(data[0].id);
+        })
+        .catch((err) => console.error("Error fetching categories:", err));
+    }
+  }, [isAuthenticated]);
 
-  // Fetch items when the selected category changes
+  // Fetch items when category changes with authentication
   useEffect(() => {
-    if (selectedCategory) {
-      fetch(`http://localhost:3000/items?category=${selectedCategory}`)
+    if (selectedCategory && isAuthenticated) {
+      fetch(`http://localhost:3000/items?category=${selectedCategory}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
+        }
+      })
         .then((res) => res.json())
         .then((data) => {
           setItems(data);
-          // we also need to clear the selected item in item detail window when the category changes
           setSelectedItem(null);
         })
         .catch((err) => console.error("Error fetching items:", err));
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, isAuthenticated]);
 
-  useEffect(() => {
-    if (selectedCategory) {
-      fetch(`http://localhost:3000/items?category=${selectedCategory}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setItems(data);
-          setSelectedItem(null);
-        })
-        .catch((err) => console.error("Error fetching items:", err));
-    }
-  }, [selectedCategory]);
+  // Create protected components using HOC
+  const Home = () => (
+    <main className="container mx-auto">
+      <div className="my-4">
+        <CategoryTabs
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+          onAddCategory={() => setShowAddCategoryModal(true)}
+          onDeleteCategory={(catId) => {
+            const cat = categories.find((c) => c.id === catId);
+            setCategoryToDelete(cat);
+            setShowDeleteCategoryModal(true);
+          }}
+        />
+      </div>
 
-  return (
-    <div className="min-h-screen bg-stone-100 flex flex-col relative">
-
-      <Header />
-
-      <main className="container mx-auto ">
-
-        <div className="my-4">
-          <CategoryTabs
+      <div className="container mx-auto flex flex-1 p-8 flex-col md:flex-row justify-between gap-4">
+        <div className="w-full md:w-1/3 p-8 bg-stone-200 rounded-xl shadow-md">
+          <MasonryGrid
+            items={items}
+            onSelectItem={setSelectedItem}
             categories={categories}
-            selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-            onAddCategory={() => setShowAddCategoryModal(true)}
-            onDeleteCategory={(catId) => {
-              // Set the category to delete and show the modal
-              const cat = categories.find((c) => c.id === catId);
-              setCategoryToDelete(cat);
-              setShowDeleteCategoryModal(true);
+            onAddItem={() => setShowAddItemModal(true)}
+          />
+        </div>
+        <div className="w-full md:w-2/3 bg-stone-200 rounded-xl shadow-md">
+          <ItemDetail
+            item={selectedItem}
+            onUpdateRequest={(item) => {
+              setItemToUpdate(item);
+              setShowUpdateModal(true);
+            }}
+            onItemDeleted={() => {
+              fetch(`http://localhost:3000/items?category=${selectedCategory}`, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
+                }
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  setItems(data);
+                  setSelectedItem(null);
+                })
+                .catch((err) => console.error("Error refreshing items:", err));
             }}
           />
         </div>
+      </div>
+    </main>
+  );
 
-        <div className="container mx-auto flex flex-1 p-8 flex-col md:flex-row justify-between gap-4">
-          <div className="w-full md:w-1/3 p-8 bg-stone-200  rounded-xl shadow-md">
+  // Wrap with authentication protection
+  const ProtectedHome = authRequired(Home);
 
-            <MasonryGrid
-              items={items}
-              onSelectItem={setSelectedItem}
-              categories={categories}
-              onAddItem={() => setShowAddItemModal(true)}
-            />
-          </div>
-          <div className="w-full md:w-2/3  bg-stone-200 rounded-xl shadow-md">
-            <ItemDetail
-              item={selectedItem}
-              onUpdateRequest={(item) => {
-                setItemToUpdate(item);
-                setShowUpdateModal(true);
-              }}
-              onItemDeleted={() => {
-                // Refreshes item grid here when an item is deleted
-                fetch(`http://localhost:3000/items?category=${selectedCategory}`)
-                  .then((res) => res.json())
-                  .then((data) => {
-                    setItems(data);
-                    setSelectedItem(null);
-                  })
-                  .catch((err) => console.error("Error fetching items:", err));
-              }}
-            />
-          </div>
+  return (
+    <BrowserRouter>
+      <div className="min-h-screen bg-stone-100 flex flex-col relative">
+        <Header
+          handleLogout={handleLogout}
+          isAuthenticated={isAuthenticated}
+          userEmail={userEmail}
+        />
+
+        <Routes>
+          {/* Public routes */}
+          <Route 
+            path="/sign-in" 
+            element={
+              !isAuthenticated ? (
+                <SignIn handleLogin={handleLogin} />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+          <Route 
+            path="/sign-up" 
+            element={
+              !isAuthenticated ? (
+                <SignUp />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            } 
+          />
+
+          {/* Protected routes */}
+          <Route
+            path="/"
+            element={isAuthenticated ? <ProtectedHome /> : <Navigate to="/sign-in" />}
+          />
+        </Routes>
+
+        <div className="fixed bottom-0 left-0 w-full bg-stone-100">
+          <Footer />
         </div>
 
-      </main>
-      <div className="fixed bottom-0 left-0 w-full bg-stone-100 ">
-        <Footer />
-      </div>
-
-      {/* MODALS */}
-      {/*  Add Item Modal - when an item is added, the api returns the new item object (newItem) which is then used to refresh/update the item grid */}
-      {showAddItemModal && (
-        <AddItemModal
-          onClose={() => setShowAddItemModal(false)}
-          onItemAdded={(newItem) => {
-            // for a better experience, we refresh the item grid whenver an item is added/updated/deleted
-            // therefore, we refresh the item grid when an item is added by refetching the items upon close/submission
-            fetch(`http://localhost:3000/items?category=${selectedCategory}`)
-              .then((res) => res.json())
-              .then((data) => {
-                setItems(data);
-                setSelectedItem(null);
-              })
-              .catch((err) => console.error("Error refreshing items:", err));
-            setShowAddItemModal(false);
-          }}
-        />
-      )}
-      {/* Add Category Modal - When a new category is added, the API returns the saved category (savedCategory)
-          which is used to refresh the category list */}
-      {showAddCategoryModal && (
-        <AddCategoryModal
-          onClose={() => setShowAddCategoryModal(false)}
-          onCategoryAdded={(newCategory) => { // newCategory holds the completely saved category object from the API.
-            // then we refresh the category list
-            fetch("http://localhost:3000/categories")
-              .then((res) => res.json())
-              .then((data) => {
-                setCategories(data);
-                if (!selectedCategory && data.length > 0) {
-                  setSelectedCategory(data[0].id);
+        {/* MODALS */}
+        {showAddItemModal && (
+          <AddItemModal
+            onClose={() => setShowAddItemModal(false)}
+            onItemAdded={(newItem) => {
+              fetch(`http://localhost:3000/items?category=${selectedCategory}`, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
                 }
               })
-              .catch((err) => console.error("Error refreshing categories:", err));
-            setShowAddCategoryModal(false);
-          }}
-        />
-      )}
-
-      {/* Update Item Modal - When an item is updated, the API returns the updated item,
-          and we refresh the item grid by re-fetching the items */}
-      {showUpdateModal && itemToUpdate && (
-        <UpdateItemModal
-          item={itemToUpdate}
-          onClose={() => setShowUpdateModal(false)}
-          onItemUpdated={() => {
-            // Refreshes item grid here when an item is updated
-            fetch(`http://localhost:3000/items?category=${selectedCategory}`)
-              .then((res) => res.json())
-              .then((data) => {
-                setItems(data);
-                setSelectedItem(null);
+                .then((res) => res.json())
+                .then((data) => {
+                  setItems(data);
+                  setSelectedItem(null);
+                })
+                .catch((err) => console.error("Error refreshing items:", err));
+              setShowAddItemModal(false);
+            }}
+          />
+        )}
+        
+        {showAddCategoryModal && (
+          <AddCategoryModal
+            onClose={() => setShowAddCategoryModal(false)}
+            onCategoryAdded={(newCategory) => {
+              fetch("http://localhost:3000/categories", {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
+                }
               })
-              .catch((err) => console.error("Error refreshing items:", err));
-            setShowUpdateModal(false);
-          }}
-        />
-      )}
+                .then((res) => res.json())
+                .then((data) => {
+                  setCategories(data);
+                  if (!selectedCategory && data.length > 0) {
+                    setSelectedCategory(data[0].id);
+                  }
+                })
+                .catch((err) => console.error("Error refreshing categories:", err));
+              setShowAddCategoryModal(false);
+            }}
+          />
+        )}
 
-      {/* Delete Item Modal - When an item is deleted, we refresh the grid by re-fetching the items */}
-      {showDeleteModal && (
-        <DeleteItemModal
-          item={selectedItem}
-          onClose={() => setShowDeleteModal(false)}
-          onItemDeleted={() => {
-            fetch(`http://localhost:3000/items?category=${selectedCategory}`)
-              .then((res) => res.json())
-              .then((data) => {
-                setItems(data);
-                setSelectedItem(null);
+        {showUpdateModal && itemToUpdate && (
+          <UpdateItemModal
+            item={itemToUpdate}
+            onClose={() => setShowUpdateModal(false)}
+            onItemUpdated={() => {
+              fetch(`http://localhost:3000/items?category=${selectedCategory}`, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
+                }
               })
-              .catch((err) => console.error("Error refreshing items:", err));
-            setShowDeleteModal(false);
-          }}
-        />
-      )}
-      {/* Confirm Deletion Modal - When an category is deleted, we show this modal */}
-      {showDeleteCategoryModal && categoryToDelete && (
-        <DeleteCategoryModal
-          message={`Are you sure you want to delete category "${categoryToDelete.name}"?`}
-          onConfirm={() => {
-            fetch(`http://localhost:3000/categories/${categoryToDelete.id}`, {
-              method: "DELETE",
-            })
-              .then((res) => res.json())
-              .then(() => {
-                // Refresh categories after deletion
-                fetch("http://localhost:3000/categories")
-                  .then((res) => res.json())
-                  .then((data) => {
-                    setCategories(data);
-                    // Optionally update selectedCategory if needed
+                .then((res) => res.json())
+                .then((data) => {
+                  setItems(data);
+                  setSelectedItem(null);
+                })
+                .catch((err) => console.error("Error refreshing items:", err));
+              setShowUpdateModal(false);
+            }}
+          />
+        )}
+
+        {showDeleteModal && (
+          <DeleteItemModal
+            item={selectedItem}
+            onClose={() => setShowDeleteModal(false)}
+            onItemDeleted={() => {
+              fetch(`http://localhost:3000/items?category=${selectedCategory}`, {
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
+                }
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  setItems(data);
+                  setSelectedItem(null);
+                })
+                .catch((err) => console.error("Error refreshing items:", err));
+              setShowDeleteModal(false);
+            }}
+          />
+        )}
+        
+        {showDeleteCategoryModal && categoryToDelete && (
+          <DeleteCategoryModal
+            message={`Are you sure you want to delete category "${categoryToDelete.name}"?`}
+            onConfirm={() => {
+              fetch(`http://localhost:3000/categories/${categoryToDelete.id}`, {
+                method: "DELETE",
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
+                }
+              })
+                .then((res) => res.json())
+                .then(() => {
+                  fetch("http://localhost:3000/categories", {
+                    headers: {
+                      'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
+                    }
                   })
-                  .catch((err) =>
-                    console.error("Error refreshing categories:", err)
-                  );
-                setShowDeleteCategoryModal(false);
-                setCategoryToDelete(null);
-              })
-              .catch((err) =>
-                console.error("Error deleting category:", err)
-              );
-          }}
-          onCancel={() => {
-            setShowDeleteCategoryModal(false);
-            setCategoryToDelete(null);
-          }}
-        />
-      )}
-
-    </div>
+                    .then((res) => res.json())
+                    .then((data) => {
+                      setCategories(data);
+                      if (data.length > 0) {
+                        setSelectedCategory(data[0].id);
+                      } else {
+                        setSelectedCategory(null);
+                      }
+                    })
+                    .catch((err) => console.error("Error refreshing categories:", err));
+                  setShowDeleteCategoryModal(false);
+                  setCategoryToDelete(null);
+                })
+                .catch((err) => console.error("Error deleting category:", err));
+            }}
+            onCancel={() => {
+              setShowDeleteCategoryModal(false);
+              setCategoryToDelete(null);
+            }}
+          />
+        )}
+      </div>
+    </BrowserRouter>
   );
 }
 

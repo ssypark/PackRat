@@ -6,6 +6,7 @@ const app = express(); // creates an Express application
 const bodyParser = require('body-parser'); // enables parsing of JSON data so that
 const itemsRouter = require('./routers/items'); // imports the items router
 const categoriesRouter = require('./routers/categories'); // imports the categories router
+const usersRouter = require('./routers/users'); // imports the users router
 const port = 3000; // sets the port number
 
 // Enable CORS
@@ -20,6 +21,7 @@ app.use(express.static('public'));
 // Use the routers 
 app.use('/items', itemsRouter);
 app.use('/categories', categoriesRouter);
+app.use("/users", usersRouter); // we use the users router to handle requests to the /users endpoint
 
 // Start the server
 app.listen(port, () => {
