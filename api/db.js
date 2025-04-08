@@ -1,6 +1,6 @@
 const mysql = require('mysql2'); // mysql2 package
 const db = mysql.createConnection({ // this will create a connection to the database
-    host: '127.0.0.1', // localhost
+    host: 'localhost', // localhost
     user: 'root', // default username
     password: 'root', // default password
     database: 'packrat', // database name

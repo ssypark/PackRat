@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom"; // Link is used to navigate to the sign in page after successful registration
 
 // Here we define the SignUp component
 // this is the main component for the sign up page

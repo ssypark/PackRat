@@ -1,3 +1,6 @@
+// import the .env file variables
+require('dotenv').config();
+
 // with express installed we can create a router
 const express = require('express');
 // creating a router for this endpoint

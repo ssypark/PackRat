@@ -1,5 +1,6 @@
 // this is the main server file for the API
 // it imports all the necessary modules and routers, establishes the middleware and starts the Express server
+
 const express = require('express');
 const cors = require('cors'); // enables cross-origin resource sharing
 const app = express(); // creates an Express application
@@ -18,10 +19,13 @@ app.use(bodyParser.json());
 // Serve the 'public' folder as a static folder
 app.use(express.static('public'));
 
-// Use the routers 
+// Public routes (no authentication required)
+// we use the users router to handle requests to the /users endpoint
+
+// Protected routes (authentication required)
 app.use('/items', itemsRouter);
 app.use('/categories', categoriesRouter);
-app.use("/users", usersRouter); // we use the users router to handle requests to the /users endpoint
+app.use("/users", usersRouter); 
 
 // Start the server
 app.listen(port, () => {

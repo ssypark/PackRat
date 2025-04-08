@@ -1,3 +1,4 @@
+require('dotenv').config();
 const jwt = require("jsonwebtoken");
 
 // We first need to get the JWT secret from the environment variables (.env) file

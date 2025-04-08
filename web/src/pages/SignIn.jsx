@@ -69,6 +69,7 @@ function SignIn({ handleLogin }) {
             // this function is responsible for storing the token in local storage and updating the user state
             // we also redirect the user to the home page after successful login
             .then(data => {
+                console.log("Log in response:", data);
                 // Call the login handler with the token and email
                 handleLogin(data.jwt, formData.email);
                 // Redirect to home page
