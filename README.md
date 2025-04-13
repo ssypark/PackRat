@@ -105,6 +105,6 @@ The application will be available on a URL eg. http://localhost:5173
   - `/public` - Static assets
 
 ## Credits
-Developed by Samuel Park for MDIA-4294 Web Scripting 3 taught by Airrick Dunfield Term Project.
-GitHub Copilot for bug fixing, teaching concepts, and implementation guidance.
-The Ballpit background component found on [ReactBits](https://www.reactbits.dev/) is inspired by [Kevin Levron](https://x.com/soju22/status/1858925191671271801).
+- Developed by Samuel Park for MDIA-4294 Web Scripting 3 Term Project taught by [Airrick Dunfield](https://www.linkedin.com/in/airrickdunfield/).
+- GitHub Copilot for bug fixing, teaching concepts, and implementation guidance.
+- The Ballpit background component found on [ReactBits](https://www.reactbits.dev/) is inspired by [Kevin Levron](https://x.com/soju22/status/1858925191671271801).
