@@ -97,8 +97,6 @@ function SignIn({ handleLogin }) {
                 />
             </div>
 
-          
-
             {/* Form content */}
             <div className="container mx-auto p-8 max-w-md z-20 mt-[-300px]">
                 <div className="bg-white/50 backdrop-blur-sm p-8 rounded-xl shadow-lg border border-white/20">

@@ -176,7 +176,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-stone-100 flex flex-col relative">
+      <div className="min-h-screen bg-stone-200 flex flex-col relative">
         <Header
           handleLogout={handleLogout}
           isAuthenticated={isAuthenticated}
@@ -185,25 +185,25 @@ function App() {
 
         <Routes>
           {/* Public routes */}
-          <Route 
-            path="/sign-in" 
+          <Route
+            path="/sign-in"
             element={
               !isAuthenticated ? (
                 <SignIn handleLogin={handleLogin} />
               ) : (
                 <Navigate to="/" replace />
               )
-            } 
+            }
           />
-          <Route 
-            path="/sign-up" 
+          <Route
+            path="/sign-up"
             element={
               !isAuthenticated ? (
                 <SignUp />
               ) : (
                 <Navigate to="/" replace />
               )
-            } 
+            }
           />
 
           {/* Protected routes */}
@@ -213,7 +213,7 @@ function App() {
           />
         </Routes>
 
-        <div className="fixed bottom-0 left-0 w-full bg-stone-100">
+        <div className="fixed bottom-0 left-0 w-full">
           <Footer />
         </div>
 
@@ -238,7 +238,7 @@ function App() {
             }}
           />
         )}
-        
+
         {showAddCategoryModal && (
           <AddCategoryModal
             onClose={() => setShowAddCategoryModal(false)}
@@ -302,13 +302,13 @@ function App() {
             }}
           />
         )}
-        
+
         {showDeleteCategoryModal && categoryToDelete && (
           <DeleteCategoryModal
-          // we also need a token for this request since categories are a protected resource as well
-          // see AddCategoryModalContent.jsx for full explanation on how this works
-          
-          // Deleting a category is a bit different from deleting an item
+            // we also need a token for this request since categories are a protected resource as well
+            // see AddCategoryModalContent.jsx for full explanation on how this works
+
+            // Deleting a category is a bit different from deleting an item
             // because we need to check if there are any items in that category
             // before we can delete it. If there are items in the category, we need to show a confirmation modal
             // to confirm that the user wants to delete the category and all its items
@@ -336,7 +336,7 @@ function App() {
                   // so here we close the modal and reset the state
                   setShowDeleteCategoryModal(false);
                   setCategoryToDelete(null);
-                  
+
                   // Fetch updated categories to update the UI
                   fetch("http://localhost:3000/categories", {
                     headers: {
@@ -347,7 +347,7 @@ function App() {
                     .then((data) => {
                       // Update the categories state with the refreshed data
                       setCategories(data);
-                      
+
                       // If we deleted the currently selected category, select another one
                       if (selectedCategory === categoryToDelete.id) {
                         if (data.length > 0) {
