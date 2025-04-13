@@ -1,67 +1,110 @@
-# Samuel Park's Portfolio Project
+# PackRat - Inventory Management System
 
-- This is the source code for my personal portfolio website, developed so far for **Assignment 2** for **MDIA 3294 (Web Scripting 2)** in the **BCIT New Media Design and Web Development Program**. The project highlights my skills, values and projects that have been completed during my time at BCIT. It also showcases my design philosophy while incorporating responsive design, animations and interactive elements.
----
+## About PackRat
+
+PackRat is a Single Page Application (SPA) designed to help users manage and track their inventory across multiple hobbies. I was inspired by video game inventory user interfaces (Zelda BOTW in particular), PackRat provides a visually appealing way to categorize and organize collections of items.
+
+This application was created for MDIA-4294 Web Scripting 3 Term Project, with the goal of aiding those who need help tracking inventory across multiple hobbies or collections.
 
 ## Features
 
-- **Responsive Design**: Built with **Tailwind CSS**, optimized for all devices.
-- **Animations**: Built with **GSAP** and **React**.
-- **Interactive Components**: Includes a fun interaction with a school of fish along with frogs to hop 
-    around on the page.
-- **Accessible Design**: Designed with **ARIA** labels and best practices for usability.
+- **User Authentication**: Secure login and registration system
+- **Category Management**: Create and organize items into custom categories
+- **Visual Item Display**: Interactive "orb" display inspired by game inventories and the movie Inside Out
+- **Item Details**: View and edit item information
+- **Responsive Design**: Works across desktop and mobile devices
+- **Modern UI**: Beautiful interactive backgrounds and animations
 
----
+## How It Works
 
-## Getting Started
+PackRat uses a modern React frontend with a Node.js/Express backend and MySQL database. The application follows a Single Page Application architecture where users can:
 
-Follow these 4 easy steps to run the project locally:
+1. Create an account or log in to an existing one
+2. Create custom categories for different collections or hobbies
+3. Add items to these categories with names, descriptions, and images
+4. View items in an interactive orb-based grid
+5. Click on items to see detailed information
+6. Update or delete items as needed
 
-1. **Clone the Repository**
-    Open up your terminal and run the following command:
-    ```bash
-    git clone https://github.com/ssypark/Portfolio-1-Samuel-Park.git
-    cd Portfolio-1-Samuel-Park
+## Setup Instructions
 
-2. **Install Dependencies**
-    ```bash
+### Prerequisites
+
+- Node.js (v14+)
+- MySQL (v8+)
+- npm or yarn
+
+### Database Setup
+
+1. Create a MySQL database named `packrat`
+2. Import the database schema from `packrat_db.sql` in the project root:
+   ```bash
+   mysql -u root -p packrat < packrat_db.sql
+
+### Backend Setup
+1. Navigate to the api directory:
+```bash
+    cd api
+```
+2. Install dependencies:
+```bash
     npm install
+```
+3.  Configure your database connection in db.js if needed:
+``` bash
+    const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'root',
+  database: 'packrat',
+  port: 8889 // Adjust as needed for your MySQL configuration
+});
+```
 
-2. **Run Development Server**
-    ```bash
+4.  Start the backend server:
+``` bash
+    npm start
+```
+The server will run on http://localhost:3000
+
+### Frontend Setup
+1. Navigate to the web directory:
+``` bash
+    cd web
+```
+
+2. Install dependencies:
+```bash
+    npm install
+```
+
+3. Start the development server:
+```bash
     npm run dev
+```
 
-4. **Access Locally**
-    Open up your favourite browser and go to the URL provided in the terminal (eg, http://localhost:5173)
+The application will be available at http://localhost:5173
 
----
+## Technologies Used
 
-## Tools and Libraries Used
+- **Frontend**: React, React Router, Tailwind CSS, Three.js
+- **Backend**: Node.js, Express.js
+- **Database**: MySQL
+- **Authentication**: JSON Web Tokens (JWT)
+- **Other**: Multer for file uploads, bcrypt for password hashing
 
-- **React.js**: JavaScript Library for building user interfaces.
-- **Vite**: Next-generation front-end tooling for fast builds.
-- **Tailwind CSS**: Utility-first CSS framework for styling.
-- **GSAP**: Animation Library for smooth and engaging transitions.
-- **React Router**: Library for routing and navigation.
-- **React Burger Menu**: Customizable navigation menu for responsive design.
-- **Lenis**: Smoooooooth scrolling experience.
+## Project Structure
 
---- 
+- `/api` - Backend Express server and API endpoints
+  - `/routers` - API route handlers
+  - `/public` - Static files including uploaded images
+  
+- `/web` - React frontend
+  - `/src/components` - Reusable React components
+  - `/src/pages` - Page components
+  - `/public` - Static assets
 
-## Additional Notes
-
-### Plugins and Configuration
-
-- **GSAP Animations**: Refer to `/src/animations/animations.js` for animation details.
-- **Tailwind Config**: Tailwind setup is in `tailwind.config.js`.
-
-### Responsive Design
-
-- **Tailwind Classes**: Tailwind classes are used to ensure responsiveness across all screen sizes.
-- **Utilities**: Utilities such as `container`, `mx-auto`, and `px-8` are used for consistent spacing.
-
-## Contact Information
-
-**Author**: Samuel Park  
-**Student ID**: A00943561 
-**Class ID**: MDIA 3294 - Web Scripting 2. Taught by Airrick Dunfield
+## Credits
+Developed by Samuel Park for MDIA-4294 Web Scripting 3 taught by Airrick Dunfield Term Project.
+GitHub Copilot for bug fixing, teaching concepts, and implementation guidance.
+The Ballpit background component found on [ReactBits](https://www.reactbits.dev/) is inspired by [Kevin Levron](https://x.com/soju22/status/1858925191671271801).
