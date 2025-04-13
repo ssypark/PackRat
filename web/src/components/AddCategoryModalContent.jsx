@@ -40,11 +40,31 @@ function ModalContent({ onCategoryAdded, onClose }) {
             color: categoryColor,
             dateCreated: new Date().toISOString(), 
         };
-        console.log("Submitting newCategory:", newCategory);
+        // when a user logs in, a JWT token is generated and sent to the client
+        // this token contains encoded user information (email, id, etc) and is used to authenticate the user
+        // the token is signed in with a secret key that is known only to the server
+        // this token is stored in localStorage and is used to authenticate the user
+
+        // for any protected endpoint (in this case, adding a category), we need to send the JWT token in the headers of our request
+        // This is done by adding an Authorization header with format: "Bearer [token]", wihout this, the server responds with a 401 Unauthorized error
+        // The server will check if the token is valid and if the user has permission to add a category
+        // upon recieving the request, the server will decode the token from the header and checks if the user is authorized, extracts the users data, allows to proceed
+        // this is done in the fetch request below
         try {
+            // Get the JWT token from localStorage
+            const token = localStorage.getItem("jwt-token");
+            
+            // we then send a POST request including the token in the header of the request
+            // without the token, the server will not allow the request to go through
             const response = await fetch("http://localhost:3000/categories", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    // Set the content type to JSON
+                    "Content-Type": "application/json",
+                    // Include the JWT token in the Authorization header followed by the word Bearer
+                    // the Bearer keyword is used to indicate that the token is a bearer token/authentication scheme
+                    "Authorization": `Bearer ${token}` 
+                },
                 body: JSON.stringify(newCategory),
             });
             

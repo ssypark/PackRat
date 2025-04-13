@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom"; // Link is used to navigate to the sign in page after successful registration
+import Ballpit from "../components/Ballpit"; // Import the Ballpit component
 
 // Here we define the SignUp component
 // this is the main component for the sign up page
@@ -98,81 +99,96 @@ function SignUp() {
     };
 
     return (
-        <div className="container mx-auto p-8 max-w-md">
-            <div className="bg-white p-8 rounded-xl shadow-md">
-                <h2 className="text-2xl font-bold mb-6 text-center text-stone-700">Create Account</h2>
+        <div className="min-h-screen flex items-center justify-center relative">
+            {/* Ballpit background directly in component */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+                <Ballpit
+                    count={100}
+                    gravity={0.5}
+                    friction={0.9975}
+                    wallBounce={0.95}
+                    followCursor={true}
+                    colors={['#805AD5', '#4FD1C5', '#F6AD55']}
+                />
+            </div>
 
-                {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                        {error}
-                    </div>
-                )}
+            {/* Form content */}
+            <div className="container mx-auto p-8 max-w-md z-20 mt-[-300px]">
+                <div className="bg-white/50 backdrop-blur-sm p-8 rounded-xl shadow-lg border border-white/20">
+                    <h2 className="text-2xl font-bold mb-6 text-center text-stone-700">Create Account</h2>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-stone-700 text-sm font-bold mb-2" htmlFor="email">
-                            Email
-                        </label>
-                        <input
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="email"
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+                    {error && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                            {error}
+                        </div>
+                    )}
 
-                    <div className="mb-4">
-                        <label className="block text-stone-700 text-sm font-bold mb-2" htmlFor="password">
-                            Password
-                        </label>
-                        <input
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="password"
-                            type="password"
-                            name="password"
-                            placeholder="At least 8 characters"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-4">
+                            <label className="block text-stone-700 text-sm font-bold mb-2" htmlFor="email">
+                                Email
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="email"
+                                type="email"
+                                name="email"
+                                placeholder="Email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
 
-                    <div className="mb-6">
-                        <label className="block text-stone-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
-                            Confirm Password
-                        </label>
-                        <input
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="confirmPassword"
-                            type="password"
-                            name="confirmPassword"
-                            placeholder="Confirm password"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+                        <div className="mb-4">
+                            <label className="block text-stone-700 text-sm font-bold mb-2" htmlFor="password">
+                                Password
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="password"
+                                type="password"
+                                name="password"
+                                placeholder="At least 8 characters"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
 
-                    <div className="flex items-center justify-between">
-                        <button
-                            className="bg-stone-600 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                            type="submit"
-                        >
-                            Sign Up
-                        </button>
-                    </div>
+                        <div className="mb-6">
+                            <label className="block text-stone-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
+                                Confirm Password
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="confirmPassword"
+                                type="password"
+                                name="confirmPassword"
+                                placeholder="Confirm password"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
 
-                    <div className="mt-4 text-center">
-                        <span className="text-sm">Already have an account? </span>
-                        <Link to="/sign-in" className="text-stone-600 hover:underline text-sm">
-                            Sign In
-                        </Link>
-                    </div>
-                </form>
+                        <div className="flex items-center justify-between">
+                            <button
+                                className="bg-stone-600 hover:bg-stone-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+                                type="submit"
+                            >
+                                Sign Up
+                            </button>
+                        </div>
+
+                        <div className="mt-4 text-center">
+                            <span className="text-sm">Already have an account? </span>
+                            <Link to="/sign-in" className="text-stone-600 hover:underline text-sm">
+                                Sign In
+                            </Link>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );

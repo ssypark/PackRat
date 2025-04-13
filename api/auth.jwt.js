@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 // We first need to get the JWT secret from the environment variables (.env) file
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// This middleware function chechs if the request has a valid JWT token
+// This middleware function checks if the request has a valid JWT token
 const authenticateToken = (req, res, next) => {
 
     // Here, we pull the Authorization header out of the headers

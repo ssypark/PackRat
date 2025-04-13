@@ -12,9 +12,11 @@ import DeleteItemModal from "./components/DeleteItemModal";
 import MasonryGrid from "./components/MasonryGrid";
 import CategoryTabs from "./components/CategoryTabs";
 import DeleteCategoryModal from "./components/DeleteCategoryModal";
-// Import auth components (we'll create these next)
+
+// Import auth components and pages
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+
 // Import auth HOC
 import authRequired from "./authRequired";
 
@@ -219,6 +221,7 @@ function App() {
         {showAddItemModal && (
           <AddItemModal
             onClose={() => setShowAddItemModal(false)}
+            selectedCategoryId={selectedCategory} // and here, we pass the currently selected category
             onItemAdded={(newItem) => {
               fetch(`http://localhost:3000/items?category=${selectedCategory}`, {
                 headers: {
@@ -302,16 +305,39 @@ function App() {
         
         {showDeleteCategoryModal && categoryToDelete && (
           <DeleteCategoryModal
+          // we also need a token for this request since categories are a protected resource as well
+          // see AddCategoryModalContent.jsx for full explanation on how this works
+          
+          // Deleting a category is a bit different from deleting an item
+            // because we need to check if there are any items in that category
+            // before we can delete it. If there are items in the category, we need to show a confirmation modal
+            // to confirm that the user wants to delete the category and all its items
+            // If there are no items in the category, we can delete it directly
             message={`Are you sure you want to delete category "${categoryToDelete.name}"?`}
             onConfirm={() => {
               fetch(`http://localhost:3000/categories/${categoryToDelete.id}`, {
                 method: "DELETE",
                 headers: {
-                  'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
+                  'Authorization': `Bearer ${localStorage.getItem("jwt-token")}` // JWT authentication
                 }
               })
-                .then((res) => res.json())
+                .then((res) => {
+                  if (!res.ok) {
+                    // if unsuccessful, throw an error
+                    return res.text().then(text => {
+                      throw new Error(`Failed to delete category: ${res.status} ${text}`);
+                    });
+                  }
+                  // if successful, parse the JSON response
+                  return res.json();
+                })
                 .then(() => {
+                  // for better UX, after deleting the category, we need to refresh the categories list
+                  // so here we close the modal and reset the state
+                  setShowDeleteCategoryModal(false);
+                  setCategoryToDelete(null);
+                  
+                  // Fetch updated categories to update the UI
                   fetch("http://localhost:3000/categories", {
                     headers: {
                       'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
@@ -319,18 +345,27 @@ function App() {
                   })
                     .then((res) => res.json())
                     .then((data) => {
+                      // Update the categories state with the refreshed data
                       setCategories(data);
-                      if (data.length > 0) {
-                        setSelectedCategory(data[0].id);
-                      } else {
-                        setSelectedCategory(null);
+                      
+                      // If we deleted the currently selected category, select another one
+                      if (selectedCategory === categoryToDelete.id) {
+                        if (data.length > 0) {
+                          // if there are no other categories, select the first one (0)
+                          setSelectedCategory(data[0].id);
+                        } else {
+                          // if there are no other categories, we clear the selection and items by selecting null
+                          setSelectedCategory(null);
+                          setItems([]);
+                        }
                       }
                     })
-                    .catch((err) => console.error("Error refreshing categories:", err));
-                  setShowDeleteCategoryModal(false);
-                  setCategoryToDelete(null);
                 })
-                .catch((err) => console.error("Error deleting category:", err));
+                .catch((err) => {
+                  // if there was an error, log it and show an error message
+                  console.error("Error deleting category:", err);
+                  alert("Error deleting category. Please try again.");
+                });
             }}
             onCancel={() => {
               setShowDeleteCategoryModal(false);

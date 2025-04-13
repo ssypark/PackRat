@@ -88,10 +88,10 @@ usersRouter.post("/sign-in", async (req, res) => {
 
         // Create a JWT token and send it back, valid for 5 hours
         const token = jwt.sign(
-            { userId: user.id, email: user.email },
+            { userId: userData.id, email: userData.email },
             JWT_SECRET,
             { expiresIn: "72h" }
-          );
+        );
 
         // Send back the token and user ID
         res.json({

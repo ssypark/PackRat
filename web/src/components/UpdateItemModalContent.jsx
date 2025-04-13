@@ -44,10 +44,19 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
       formData.append("image", image);
     }
 
-    // Send a PUT request to update the item
+    // Like any other CRUD operation with logged in users, we need to send the JWT token in the headers of our request
+    // See AddCategoryModalContent.jsx for full explanation
+    
+    // Get the JWT token from localStorage
+    const token = localStorage.getItem("jwt-token");
+
+    // Send a PUT request to update the item with authentication
     try {
       const response = await fetch(`http://localhost:3000/items/${item.id}`, {
         method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}` // Include JWT authentication
+        },
         body: formData,
       });
       // If the response isnt OK, throw an error
