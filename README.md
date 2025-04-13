@@ -1,6 +1,6 @@
 # Samuel Park's Portfolio Project
 
-This is the source code for my personal portfolio website, developed so far for **Assignment 2** for **MDIA 3294 (Web Scripting 2)** in the **BCIT New Media Design and Web Development Program**. The project highlights my skills, values and projects that have been completed during my time at BCIT. It also showcases my design philosophy while incorporating responsive design, animations and interactive elements.
+- This is the source code for my personal portfolio website, developed so far for **Assignment 2** for **MDIA 3294 (Web Scripting 2)** in the **BCIT New Media Design and Web Development Program**. The project highlights my skills, values and projects that have been completed during my time at BCIT. It also showcases my design philosophy while incorporating responsive design, animations and interactive elements.
 ---
 
 ## Features
