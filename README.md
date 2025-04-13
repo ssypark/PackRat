@@ -83,7 +83,7 @@ The server will run on http://localhost:3000
     npm run dev
 ```
 
-The application will be available at http://localhost:5173
+The application will be available on a URL eg. http://localhost:5173
 
 ## Technologies Used
 
