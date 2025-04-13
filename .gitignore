@@ -14,6 +14,7 @@ yarn-error.log
 # Build directories
 /dist
 /build
+/web/dist
 
 # Mac files
 .DS_Store
@@ -28,3 +29,7 @@ yarn-error.log
 *.ntvs*
 *.njsproj
 *.sln
+
+# Uploaded files (except sample images for demo)
+/api/public/images/*
+!/api/public/images/sample-*.jpg
