@@ -14,8 +14,7 @@ db.connect((err) => { // This will connect to the database by using the connecti
         console.error('Error connecting: ' + err.stack);
         return;
     }
-    
-    console.log('Connected as id ' + db.threadId); // to verify that we are connected, we log the thread id
+
 });
     
 module.exports = db;

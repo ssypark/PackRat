@@ -7,7 +7,7 @@ function Header({ handleLogout, isAuthenticated, userEmail }) {
       <div className="flex items-center">
         <Link to="/" className="flex items-center">
           <img 
-            src="/icon.svg" // Updated path to be relative to public directory
+            src="/icon.svg" 
             alt="Logo" 
             className="w-8 h-8 mr-2"
           />

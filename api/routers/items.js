@@ -63,7 +63,6 @@ itemsRouter.get('/', (req, res) => {
     // execute the query with all our parameters
     db.query(sql, queryParams, (err, results) => {
         if (err) {
-            console.log(err);
             res.status(500).send('An error occurred');
         }
         res.json(results);
@@ -98,7 +97,6 @@ itemsRouter.get('/:id', (req, res) => {
             return res.status(404).json({ message: "Item not found" });
         }
         
-        console.log(results[0]);
         res.json(results[0]);
     });
 });

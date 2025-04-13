@@ -2,8 +2,6 @@ import React from "react";
 
 // Deleting an item is more straightforward than adding one because we only need to pass the item ID
 function DeleteItemModalContent({ item, onClose, onItemDeleted }) {
-  console.log("DeleteItemModalContent onClose:", onClose);
-  
   // this function handles the deletion of an item
   const handleDeleteItem = async (event) => {
     // Prevent the default HTML form from submitting
@@ -32,7 +30,6 @@ function DeleteItemModalContent({ item, onClose, onItemDeleted }) {
       }
       
       const data = await response.json();
-      console.log(data);
       onItemDeleted();
       onClose();
     } catch (error) {

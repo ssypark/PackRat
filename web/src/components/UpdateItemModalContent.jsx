@@ -63,7 +63,6 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
       if (!response.ok) throw new Error("Failed to update item");
       // If the response is OK, parse the JSON data
       const result = await response.json();
-      console.log("Update result:", result);
       // once the item is updated, call the onItemUpdated function and then close the modal
       onItemUpdated(); // Refresh the item list in the parent component
       onClose();       // Close the modal
@@ -147,7 +146,7 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
           {/* Close Modal Button */}
           <button
             type="button"
-            onClick={() => { console.log("Cancel clicked"); onClose(); }}
+            onClick={() => { onClose(); }}
             className="px-4 py-2 bg-stone-200 rounded-full text-stone-500 hover:text-stone-700"
           >
             Cancel

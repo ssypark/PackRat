@@ -12,7 +12,7 @@ function BallpitBackground({ children }) {
           friction={0.8}
           wallBounce={0.95}
           followCursor={true}
-          colors={['#805AD5', '#4FD1C5', '#F6AD55']} // PackRat brand colors
+          colors={['#805AD5', '#4FD1C5', '#F6AD55']} 
         />
       </div>
       

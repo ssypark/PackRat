@@ -21,7 +21,6 @@ import SignUp from "./pages/SignUp";
 import authRequired from "./authRequired";
 
 function App() {
-  console.log("Token in storage:", localStorage.getItem("jwt-token"));
   // AUTH STATE
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
@@ -38,7 +37,6 @@ function App() {
 
   // AUTHENTICATION HANDLERS
   const handleLogin = (token, email) => {
-    console.log("Token being saved:", token);
     localStorage.setItem("jwt-token", token);
     localStorage.setItem("userEmail", email);
     setIsAuthenticated(true);
@@ -78,19 +76,13 @@ function App() {
       })
         .then((res) => {
           if (!res.ok) {
-            // Log what's happening with the response
-            console.log("Response status:", res.status);
-            console.log("Response headers:", res.headers);
-            // This will help us see what the server is sending back
             return res.text().then(text => {
-              console.log("Response body:", text);
               throw new Error(`Failed to fetch categories: ${res.status}`);
             });
           }
           return res.json();
         })
         .then((data) => {
-          console.log("Categories data:", data);
           setCategories(data);
           if (data.length > 0) setSelectedCategory(data[0].id);
         })
