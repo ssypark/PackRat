@@ -24,30 +24,37 @@ function App() {
   // AUTH STATE
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
+  const [username, setUsername] = useState(null);
 
   // Check for existing JWT token on mount
   useEffect(() => {
     const token = localStorage.getItem("jwt-token");
     const email = localStorage.getItem("userEmail");
-    if (token && email) {
+    const storedUsername = localStorage.getItem("username");
+    if (token && email && storedUsername) {
       setIsAuthenticated(true);
       setUserEmail(email);
+      setUsername(storedUsername);
     }
   }, []);
 
   // AUTHENTICATION HANDLERS
-  const handleLogin = (token, email) => {
+  const handleLogin = (token, email, username) => {
     localStorage.setItem("jwt-token", token);
     localStorage.setItem("userEmail", email);
+    localStorage.setItem("username", username);
     setIsAuthenticated(true);
     setUserEmail(email);
+    setUsername(username);
   };
 
   const handleLogout = () => {
     localStorage.removeItem("jwt-token");
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("username");
     setIsAuthenticated(false);
     setUserEmail(null);
+    setUsername(null);
   };
 
   //CATEGORIES
@@ -69,8 +76,10 @@ function App() {
   // Fetch categories with authentication
   useEffect(() => {
     if (isAuthenticated) {
+      // if the user is authenticated, we send the JWT token in the header of the request
       fetch("http://localhost:3000/categories", {
         headers: {
+          // we use the bearer token authentication scheme to pass the token to routes that need it
           'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
         }
       })
@@ -128,8 +137,8 @@ function App() {
         />
       </div>
 
-      <div className="container mx-auto flex flex-1 p-8 flex-col md:flex-row justify-between gap-4">
-        <div className="w-full md:w-1/3 p-8 bg-stone-200 rounded-xl shadow-md">
+      <div className="container mx-auto flex flex-1 px-8 flex-col md:flex-row justify-between gap-4 h-[calc(100vh-10rem)]">
+        <div className="w-full md:w-1/3 min-h-[200px] p-4 sm:p-8 bg-stone-100 rounded-xl shadow-md overflow-y-auto">
           <MasonryGrid
             items={items}
             onSelectItem={setSelectedItem}
@@ -137,7 +146,7 @@ function App() {
             onAddItem={() => setShowAddItemModal(true)}
           />
         </div>
-        <div className="w-full md:w-2/3 bg-stone-200 rounded-xl shadow-md">
+        <div className="w-full md:w-2/3 bg-stone-100 rounded-xl shadow-md overflow-y-auto">
           <ItemDetail
             item={selectedItem}
             onUpdateRequest={(item) => {
@@ -147,8 +156,8 @@ function App() {
             onItemDeleted={() => {
               fetch(`http://localhost:3000/items?category=${selectedCategory}`, {
                 headers: {
-                  'Authorization': `Bearer ${localStorage.getItem("jwt-token")}`
-                }
+                  Authorization: `Bearer ${localStorage.getItem("jwt-token")}`,
+                },
               })
                 .then((res) => res.json())
                 .then((data) => {
@@ -173,6 +182,7 @@ function App() {
           handleLogout={handleLogout}
           isAuthenticated={isAuthenticated}
           userEmail={userEmail}
+          username={username}
         />
 
         <Routes>
@@ -205,7 +215,7 @@ function App() {
           />
         </Routes>
 
-        <div className="fixed bottom-0 left-0 w-full">
+        <div className="mt-auto">
           <Footer />
         </div>
 

@@ -18,6 +18,10 @@ const authenticateToken = (req, res, next) => {
     }
 
     // We verify the token using the secret
+    // callback of jwt.verify() will be called once the token is verified
+    // If the token is valid, it will return the decoded user data
+    // If the token is invalid, it will return an error
+    // The decoded user data will be passed to the next middleware function
     jwt.verify(token, JWT_SECRET, (err, userData) => {
 
         // If there's an error, it means the token did not validate

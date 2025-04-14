@@ -7,8 +7,9 @@ import Ballpit from "../components/Ballpit"; // Import the Ballpit component
 function SignUp() {
     // here we use the useState hook to create a state variable for the form data and setter function setFormData
     const [formData, setFormData] = useState({
-        // we begin with an empty email and password
+        // we begin with an empty email, username, and password
         email: "",
+        username: "",
         password: "",
         confirmPassword: ""
     });
@@ -33,8 +34,8 @@ function SignUp() {
             ...formData,
             // the square brackets are used to dynamically set the property name
             // we use the name variable to set the property name dynamically
-            // in this case, name is either "email" or "password" depending on which input field is being updated
-            // this makes the function reusable for both input fields
+            // in this case, name is either "email", "username", "password", or "confirmPassword" depending on which input field is being updated
+            // this makes the function reusable for all input fields
             [name]: value
         });
     };
@@ -65,19 +66,18 @@ function SignUp() {
                 "Content-Type": "application/json" // this tells the server that we are sending JSON data
             },
             // this is the body of the request
-            // we are sending the formData object as JSON. In this case, it contains the email and password
+            // we are sending the formData object as JSON. In this case, it contains the email, username, and password
             body: JSON.stringify({
                 email: formData.email,
+                username: formData.username,
                 password: formData.password
             })
         }) // Then, we process the initial response from the server to check if it was successful
             .then(response => {
                 if (!response.ok) {
-                    if (response.status === 409) { // 409 is the status code for conflict
-                        // this means that the email is already in use
-                        throw new Error("Email already in use"); // this checks if the email is already in use
-                    }
-                    throw new Error("Registration failed"); // this checks if the registration failed
+                    return response.json().then(data => {
+                        throw new Error(data.message || "Failed to create account");
+                    });
                 }
                 return response.json();
             })
@@ -86,7 +86,7 @@ function SignUp() {
             // we then call the handleLogin function passed as a prop to this component
             // this function is responsible for storing the token in local storage and updating the user state
             // we then redirect the user to the sign in page
-            .then(data => {
+            .then(() => {
                 // Redirect to sign in page after successful registration via the useNavigate hook
                 navigate("/sign-in");
             })
@@ -113,7 +113,7 @@ function SignUp() {
             </div>
 
             {/* Form content */}
-            <div className="container mx-auto p-8 max-w-md z-20 mt-[-300px]">
+            <div className="container mx-auto p-8 max-w-md z-20 mt-[-100px]">
                 <div className="bg-white/50 backdrop-blur-sm p-8 rounded-xl shadow-lg border border-white/20">
                     <h2 className="text-2xl font-bold mb-6 text-center text-stone-700">Create Account</h2>
 
@@ -135,6 +135,22 @@ function SignUp() {
                                 name="email"
                                 placeholder="Email"
                                 value={formData.email}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block text-stone-700 text-sm font-bold mb-2" htmlFor="username">
+                                Username
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="username"
+                                type="text"
+                                name="username"
+                                placeholder="Username"
+                                value={formData.username}
                                 onChange={handleChange}
                                 required
                             />

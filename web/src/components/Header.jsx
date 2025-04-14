@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function Header({ handleLogout, isAuthenticated, userEmail }) {
+function Header({ handleLogout, isAuthenticated, userEmail, username }) {
   return (
-    <header className="text-stone-600 p-4 flex items-center justify-between border-b border-stone-300">
+    <header className="text-stone-600 py-2 px-8 flex items-center justify-between border-b border-stone-300">
       <div className="flex items-center">
         <Link to="/" className="flex items-center">
           <img 
@@ -15,11 +15,11 @@ function Header({ handleLogout, isAuthenticated, userEmail }) {
         </Link>
       </div>
       
-      {/* USER INFO */}
+      {/* USER INFO - Update to show username instead of email */}
       <div className="flex items-center gap-4">
         {isAuthenticated ? (
           <>
-            <p className="text-sm">Welcome Back: <strong>{userEmail}</strong></p>
+            <p className="text-sm">Welcome Back: <strong>{username}</strong></p>
             <button 
               onClick={handleLogout}
               className="px-4 py-2 text-sm bg-stone-200 hover:bg-stone-300 rounded-md transition-colors"

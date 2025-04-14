@@ -6,8 +6,8 @@ import PlusOrb from "./PlusOrb";
 
 function MasonryGrid({ items, onSelectItem, categories, onAddItem }) {
   return (
-    <div className="p-4 h-[400px] sm:h-[900px] overflow-y-auto">
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(6rem,1fr))] gap-4" >
+    <div className="p-4 flex justify-center mx-auto">
+      <div className="flex flex-wrap gap-4 items-center" >
 
         <PlusOrb onAddItem={onAddItem} />
         {items.map((item) => {

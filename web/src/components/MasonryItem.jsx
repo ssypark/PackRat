@@ -6,17 +6,17 @@ function MasonryItem({ item, categoryColor, onSelectItem }) {
     : "";
 
   const orbColor = categoryColor || "#000000";
-  
+
   return (
-    <div 
+    <div
       onClick={() => onSelectItem(item)}
       title={item.name}
-      className="relative w-24 h-24 rounded-full overflow-hidden bg-white cursor-pointer shadow-lg hover:scale-115 transition-all duration-200 ease-in-out"
+      className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-white cursor-pointer shadow-lg hover:scale-115 transition-all duration-200 ease-in-out"
       style={{
         border: `1px solid ${orbColor}`,
       }}
     >
-      {/* 1) Background image layer */}
+      {/* Background image layer */}
       <div
         className="absolute rounded-full inset-0"
         style={{
@@ -26,14 +26,14 @@ function MasonryItem({ item, categoryColor, onSelectItem }) {
           backgroundRepeat: "no-repeat",
         }}
       />
-      {/* 2) Orb overlay: radial gradient from transparent center to fully opaque edges */}
+      {/* Orb overlay */}
       <div
         className="absolute inset-0"
         style={{
           background: `radial-gradient(circle at center, transparent 10%, ${orbColor} 60%, ${orbColor} 80%, ${orbColor} 100%)`,
         }}
       />
-      {/* 3) Highlight overlay */}
+      {/* Highlight overlay */}
       <div
         className="absolute inset-0 z-20 pointer-events-none"
         style={{

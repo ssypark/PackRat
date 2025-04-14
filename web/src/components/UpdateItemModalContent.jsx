@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
   // State for categories from the API
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState([]); // Initialize as an empty array
   // Selected category and the default is the current item's category
   const [selectedCategory, setSelectedCategory] = useState(item.category_id || "");
   // States for item details loaded with current item data from the API
@@ -12,16 +12,30 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
 
   // Fetch categories on mount
   useEffect(() => {
-    fetch("http://localhost:3000/categories")
-      .then((res) => res.json())
+    const token = localStorage.getItem("jwt-token"); // Retrieve the JWT token from localStorage
+
+    fetch("http://localhost:3000/categories", {
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch categories: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => {
         setCategories(data);
         if (data.length > 0 && !selectedCategory) {
           setSelectedCategory(data[0].id);
         }
       })
-      .catch((err) => console.error("Error fetching categories:", err));
-  }, [selectedCategory]); // Empty dependency array means this effect runs once on mount
+      .catch((err) => {
+        console.error("Error fetching categories:", err);
+        setCategories([]); // Ensure categories is set to an empty array on error
+      });
+  }, [selectedCategory]);
 
   // Handle changes to the category select input
   const handleCategoryChange = (e) => {
@@ -30,45 +44,38 @@ function UpdateItemModalContent({ item, onClose, onItemUpdated }) {
 
   // Handle form submission to update the item
   const handleSubmit = async (e) => {
-    // Prevent the default HTML form from submitting
     e.preventDefault();
-    // Set the category ID based on the selected category
-    let categoryId = selectedCategory;
 
-    // Build a FormData object to send the updated data, including an optional updated image
+    // Ensure all required fields are included
     const formData = new FormData();
-    formData.append("category_id", categoryId);
     formData.append("name", name);
     formData.append("description", description);
+    formData.append("category_id", selectedCategory);
     if (image) {
       formData.append("image", image);
     }
 
-    // Like any other CRUD operation with logged in users, we need to send the JWT token in the headers of our request
-    // See AddCategoryModalContent.jsx for full explanation
-    
-    // Get the JWT token from localStorage
-    const token = localStorage.getItem("jwt-token");
-
-    // Send a PUT request to update the item with authentication
     try {
+      const token = localStorage.getItem("jwt-token");
       const response = await fetch(`http://localhost:3000/items/${item.id}`, {
         method: "PUT",
         headers: {
-          "Authorization": `Bearer ${token}` // Include JWT authentication
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });
-      // If the response isnt OK, throw an error
-      if (!response.ok) throw new Error("Failed to update item");
-      // If the response is OK, parse the JSON data
-      const result = await response.json();
-      // once the item is updated, call the onItemUpdated function and then close the modal
-      onItemUpdated(); // Refresh the item list in the parent component
-      onClose();       // Close the modal
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to update item: ${response.status} ${errorText}`);
+      }
+
+      const updatedItem = await response.json();
+      onItemUpdated(updatedItem); // Notify parent component of the update
+      onClose(); // Close the modal
     } catch (error) {
       console.error("Error updating item:", error);
-      alert("Error updating item. Please try again.");
+      alert("Failed to update item. Please try again.");
     }
   };
 

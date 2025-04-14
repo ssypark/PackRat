@@ -8,34 +8,33 @@ function ItemDetail({ item, onUpdateRequest, onItemDeleted }) {
 
   if (!item) {
     return (
-      <div className="flex items-center justify-center  h-[900px] text-center p-4">
+      <div className="flex items-center justify-center h-full text-center p-4">
         <p className="text-stone-600">Select an item to view details.</p>
       </div>
     );
   }
 
   return (
-    <div className="pt-8 px-12 mx-auto h-[900px] overflow-y-auto">
-      {/* Header row*/}
-      <div className="flex items-center justify-between">
+    <div className="pt-6 sm:pt-8 px-6 sm:px-12 mx-auto h-[700px] overflow-y-auto">
+      {/* Header row */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <p className="text-2xl font-bold text-stone-600">{item.name}</p>
           <p className="text-sm text-stone-400">{item.category}</p>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 md:space-x-4">
           <button
             onClick={() => setShowDeleteModal(true)}
-            className="px-2 py-1 bg-stone-400 text-stone-50 rounded-full text-sm hover:bg-orange-500"
+            className="px-4 py-2 bg-stone-400 text-stone-50 rounded-full text-sm hover:bg-orange-500"
           >
             Delete
           </button>
           <button
             onClick={() => onUpdateRequest(item)}
-            className="px-2 py-1 bg-indigo-400 text-stone-50 rounded-full text-sm hover:bg-indigo-500"
+            className="px-4 py-2 bg-indigo-400 text-stone-50 rounded-full text-sm hover:bg-indigo-500"
           >
             Update
           </button>
-
         </div>
       </div>
 
@@ -43,7 +42,7 @@ function ItemDetail({ item, onUpdateRequest, onItemDeleted }) {
       <img
         src={`http://localhost:3000/images/${item.image_filename}`}
         alt={item.name}
-        className="mx-auto w-150 h-150 object-contain bg-inherit rounded-md my-10 bg-white p-8 shadow-md"
+        className="mx-auto  object-contain bg-inherit p-4 rounded-md my-10 bg-white shadow-md"
       />
 
       {/* Description */}

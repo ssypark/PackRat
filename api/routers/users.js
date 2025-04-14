@@ -15,7 +15,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');
 
 // PROCESSING THE ENV FILE
-// The secret key to use for later
+// Here we get the secret key to use for later
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const usersRouter = express.Router();
@@ -24,6 +24,7 @@ const usersRouter = express.Router();
 // POST endpoint to sign up a new user
 usersRouter.post("/", [
     body('email').isEmail().withMessage('Invalid email').normalizeEmail(), // this checks if the email is valid and normalizes it 
+    body('username').isLength({ min: 3, max: 30 }).withMessage('Username must be between 3 and 30 characters'), // this checks if the username is between 3 and 30 characters
     body("password").isLength({ min: 8 }).withMessage("Must be at least 8 characters long") // this checks if the password is at least 8 characters long
 ], async (req, res) => {
     // Collect the errors
@@ -35,15 +36,16 @@ usersRouter.post("/", [
     }
 
     const email = req.body.email;
+    const username = req.body.username;
     const password = req.body.password;
 
     // Here we can use bcrypt to hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Run the query
+    // Run the query, now including username
     db.query(
-        "INSERT INTO users (email, password) VALUES (?, ?)",
-        [email, hashedPassword],
+        "INSERT INTO users (email, username, password) VALUES (?, ?, ?)",
+        [email, username, hashedPassword],
         (err, result) => {
 
             if (err) {
@@ -88,14 +90,19 @@ usersRouter.post("/sign-in", async (req, res) => {
 
         // Create a JWT token and send it back, valid for 5 hours
         const token = jwt.sign(
-            { userId: userData.id, email: userData.email },
+            { 
+                userId: userData.id, 
+                email: userData.email,
+                username: userData.username  // Add username to the token
+            },
             JWT_SECRET,
-            { expiresIn: "72h" }
+            { expiresIn: "500h" }
         );
 
-        // Send back the token and user ID
+        // Send back the token, user ID, and username
         res.json({
             jwt: token,
+            username: userData.username,
             message: "Sign in successful"
         });
     })

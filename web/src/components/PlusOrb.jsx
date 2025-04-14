@@ -4,7 +4,7 @@ function PlusOrb({ onAddItem }) {
   return (
     <div
       onClick={onAddItem}
-      className="relative w-24 h-24 rounded-full bg-white overflow-hidden cursor-pointer flex items-center justify-center"
+      className="relative  w-16 h-16 sm:w-20 sm:h-20  rounded-full bg-white overflow-hidden cursor-pointer flex items-center justify-center"
       style={{
         background: `radial-gradient(circle at center, transparent 40%, #cccccc 100%)`
       }}
