@@ -42,10 +42,10 @@ function App() {
   const handleLogin = (token, email, username) => {
     localStorage.setItem("jwt-token", token);
     localStorage.setItem("userEmail", email);
-    localStorage.setItem("username", username);
+    localStorage.setItem("username", username); // Store username
     setIsAuthenticated(true);
     setUserEmail(email);
-    setUsername(username);
+    setUsername(username); // Set username in state
   };
 
   const handleLogout = () => {

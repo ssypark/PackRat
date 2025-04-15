@@ -1,5 +1,5 @@
 // src/components/CategoryTabs.jsx
-import React from "react";
+import React, { useState } from "react";
 
 function CategoryTabs({
   categories,
@@ -8,6 +8,8 @@ function CategoryTabs({
   onAddCategory,
   onDeleteCategory 
 }) {
+  // Add state for tooltip visibility
+  const [showTooltip, setShowTooltip] = useState(false);
 
   return (
     <div className="flex items-center justify-center h-16">
@@ -30,8 +32,6 @@ function CategoryTabs({
                   : {
                     backgroundColor: "oklch(0.869 0.005 56.366)",
                     color: "oklch(0.553 0.013 58.071)",
-                    
-                    
                   }
               }
             >
@@ -48,21 +48,27 @@ function CategoryTabs({
             </li>
           );
         })}
-        {/* Plus Button Tab */}
+        {/* Plus Button Tab with Tooltip */}
         <li
           onClick={onAddCategory}
-          title="Click to add a new category"
-          className="cursor-pointer py-2 px-4 shadow-md rounded-full transition-all duration-200 ease-in-out hover:scale-105 hover:-translate-y-1 flex items-center"
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+          className="relative cursor-pointer py-2 px-4 shadow-md rounded-full transition-all duration-200 ease-in-out hover:scale-105 hover:-translate-y-1 flex items-center group"
           style={{ 
             backgroundColor: "oklch(0.869 0.005 56.366)",
-             color: "oklch(0.553 0.013 58.071)",
-            
-             
-             }}
+            color: "oklch(0.553 0.013 58.071)",
+          }}
         >
           +
+          {/* Tooltip */}
+          <div 
+            className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1 bg-stone-800 text-white text-xs rounded whitespace-nowrap opacity-0 transition-opacity duration-200 pointer-events-none ${showTooltip ? 'opacity-90' : ''} group-hover:opacity-90`}
+          >
+            Add New Category
+            {/* Tooltip arrow */}
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-stone-800"></div>
+          </div>
         </li>
-
       </ul>
     </div>
   );
